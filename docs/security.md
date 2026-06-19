@@ -17,6 +17,7 @@ preservation** (exact errors, security warnings, and acceptance criteria stay in
 | Repomix / code2prompt | Medium | Creates a portable repository snapshot |
 | LLMLingua (advanced) | Medium | Transforms prompts — can drop detail; not auto-installed |
 | gh-aw | Medium–high | Remote autonomous execution on GitHub events |
+| Headroom proxy | High | Intercepts/transforms/caches/authenticates AI traffic — **opt-in, off by default** |
 
 ## Controls enforced by `aito`
 
@@ -33,9 +34,12 @@ preservation** (exact errors, security warnings, and acceptance criteria stay in
 - **Preserve evidence.** Use raw output for security/infra failures or when exact
   ordering or warnings matter; do not rely on compressed IAM/Terraform/security output.
 
-## Deliberately excluded
+## Off by default (explicit opt-in only)
 
-- **Headroom proxy** — intercepts/transforms/caches AI traffic; wrong fit for a native
-  VS Code single-agent workflow. Reconsider only after a dedicated security review.
+- **Headroom proxy** — intercepts, transforms, caches, and authenticates AI traffic, and
+  its documented path is Copilot CLI (not native VS Code Copilot). It is **off by default**
+  and gated behind an explicit warning + confirmation in `aito setup`. Enable it only after
+  a dedicated security review, pin the version, keep it on localhost, and never route
+  security/infra/error output through it. The default workflow stays proxy-free.
 - **Full Caveman install** — the lightweight instruction file gives most of the benefit
   without extra tooling; the full package remains an explicit opt-in.

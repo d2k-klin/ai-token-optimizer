@@ -1,22 +1,56 @@
-# ai-token-optimizer (`aito`)
+# aito — stop your AI coding agent from burning tokens
 
-A globally-installable CLI that provides a **summarized setup of available tools for
-token optimization during development**. It configures **token-efficient AI coding
-workflows** for **GitHub Copilot** and **Claude Code** in VS Code — then *proves* the
-token reduction with a measured before/after report.
+[![CI](https://github.com/d2k-klin/ai-token-optimizer/actions/workflows/ci.yml/badge.svg)](https://github.com/d2k-klin/ai-token-optimizer/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![shellcheck](https://img.shields.io/badge/shellcheck-clean-brightgreen.svg)](.github/workflows/ci.yml)
+[![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-green.svg)](#)
+[![telemetry: none](https://img.shields.io/badge/telemetry-none-1f6feb.svg)](#privacy--safety)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/d2k-klin/ai-token-optimizer/pulls)
 
-Rather than reinventing anything, `aito` installs, configures, and wires together
-existing tools behind an interactive menu, with safe defaults. It turns the
-"Token-Efficient Feature Delivery" concept (OpenSpec + concise instruction files + RTK,
-with Codesight/Graphify/Repomix/gh-aw as opt-ins) into a one-command setup, and folds in
-techniques from **ACE** (evolving context playbooks), **Pochi** (compaction, MCP scoping,
-delegating bulk data to code), and Claude token-optimization guidance (prompt caching,
-model selection, batching).
+GitHub Copilot and Claude Code waste tokens re-reading your repo, dumping build logs into
+context, and rebuilding the same explanations every session. **`aito` sets up a
+token-efficient workflow in one command — then measures the savings so you don't have to
+take a number on faith.**
 
+It doesn't reinvent anything — it's a **summarized setup of the available tools for token
+optimization during development**: a curated set (OpenSpec, RTK, ccusage, and more) wired
+together behind an interactive menu with safe defaults. It lays down concise instruction
+files for each assistant and writes a `token-report.md` you can actually read.
+
+```bash
+git clone https://github.com/d2k-klin/ai-token-optimizer.git
+cd ai-token-optimizer && make install      # ~30s, no curl|bash
+aito setup                                  # pick tools, get a measured report
+```
+
+<!-- DEMO: replace this block with an asciinema/GIF of `aito setup` → `aito verify`.
+     Record with:  asciinema rec demo.cast   (or)   vhs demo.tape
+     Embed:        [![asciicast](https://asciinema.org/a/XXXXX.svg)](https://asciinema.org/a/XXXXX) -->
+> 🎬 **Demo:** _(coming — a 15-second `aito setup → verify` recording goes here)_
+
+## Why it's different
+
+- **It measures, it doesn't promise.** No invented "saves 70%!" headline — `aito verify`
+  reports real token counts and a PASS/WARN verdict you can reproduce.
+- **No `curl | bash`. No telemetry. No proxy by default.** Runs offline except the tool
+  installs you explicitly choose; reads nothing it doesn't show you. (The one proxy-based
+  tool, Headroom, is opt-in and off by default.) See [Privacy & safety](#privacy--safety).
+- **Two tracks:** GitHub Copilot and Claude Code in VS Code — pick one or both.
+- **Safe by construction:** idempotent, never clobbers files (backs up + deep-merges),
+  risky options off by default, `shellcheck`-clean with a mocked offline test suite.
 - **Cross-platform:** macOS / Linux, Bash 3.2+ (works with stock macOS bash).
-- **Two tracks:** GitHub Copilot and Claude Code — pick one or both.
-- **Selectable tools:** OpenSpec, RTK, ccusage, Caveman, Codesight, Graphify, Repomix, gh-aw.
-- **Safe:** idempotent, never clobbers files, risky options off by default.
+
+## Privacy & safety
+
+This is deliberately boring, which is the point:
+
+- **No network** except the component installs you pick (npm/pip), each version-pinnable.
+- **No telemetry, no analytics, no phone-home.** Ever.
+- **No proxy by default.** The only proxy-based tool (Headroom) is strictly opt-in, off by
+  default, and flagged with a warning before install — nothing intercepts your AI traffic
+  unless you explicitly choose it.
+- **Non-destructive:** existing files are backed up to `*.bak`; VS Code settings are merged.
+- **Auditable install:** clone the repo and read it — no piped shell scripts.
 
 ## Documentation
 

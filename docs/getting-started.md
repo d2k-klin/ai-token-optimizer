@@ -62,9 +62,10 @@ aito setup
 You'll be asked two things:
 
 1. **Track(s)** — GitHub Copilot, Claude Code, or both.
-2. **Tools** — OpenSpec, RTK, ccusage, Caveman, Codesight, Graphify, Repomix, gh-aw. The
-   recommended ones (OpenSpec + concise instructions + RTK + ccusage) are pre-checked; the
-   optional repo-mappers and automation are off by default.
+2. **Tools** — OpenSpec, RTK, ccusage, Caveman, Codesight, Graphify, Repomix, gh-aw,
+   Headroom. The recommended ones (OpenSpec + concise instructions + RTK + ccusage) are
+   pre-checked; optional repo-mappers, automation, and the Headroom proxy are off by
+   default (Headroom also asks for explicit confirmation).
 
 In the plain UI: type a number to toggle it, `a` for all, `n` for none, then **Enter**
 to confirm.

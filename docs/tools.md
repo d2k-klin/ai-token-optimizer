@@ -161,19 +161,35 @@ small model and dropping low-information ones. Powerful for RAG and long static 
   the inputs and can measure quality. `pip install llmlingua` ·
   <https://github.com/microsoft/LLMLingua>
 
+### Headroom — AI-traffic compression proxy · **Optional, OFF by default** ⚠️
+Compresses tool outputs, files, RAG material, and conversation context *before they reach
+the model* by running a **local proxy** in front of your AI client. Selectable in
+`aito setup`, but unchecked by default and gated behind an explicit warning + confirmation.
+
+> **Note — read before enabling.** Headroom is the only tool here that becomes an
+> **intermediary in your model traffic**: it intercepts, transforms, caches, and
+> **authenticates** requests (its Copilot path stores a Headroom-specific GitHub OAuth
+> token). Its documented integration targets **GitHub Copilot CLI, not native VS Code
+> Copilot** — only enable it on a supported client. Compression can **silently drop
+> detail** the model needs, so never route security, infrastructure, or error/stack-trace
+> output through it. It enlarges your security and debugging boundary: security-review it,
+> pin the version, and keep it bound to localhost.
+
+- **When to consider it:** you're on Copilot CLI (or a custom OpenAI-compatible client),
+  you've reviewed the proxy, and you've measured that it reduces context without hurting
+  quality. Otherwise the rest of this toolkit gets most of the benefit **without** a proxy.
+- `pipx install headroom` · <https://github.com/chopratejas/headroom>
+
 ### Provider-native levers (no install — just use them)
 Often the highest-ROI moves need no tool at all: **prompt caching** (stable prefix, one
 model per session — large cache-read discounts), **model routing** by phase
 (cheap-first, escalate on failure), and **batch APIs** for background work. These are
 baked into the Claude track's `CLAUDE.md` guidance.
 
-## Deliberately excluded
+## Default-off by design
 
-- **Headroom (proxy):** compresses tool outputs/files/RAG/context *before they reach the
-  model*, but its documented Copilot path is a local proxy that intercepts, transforms,
-  caches, and authenticates AI traffic — the wrong fit for a native VS Code, single-agent
-  workflow, and a larger security boundary. Reconsider only after a dedicated security
-  review and a move to a supported client.
+- **Headroom** ships as an explicit opt-in (above), **not** part of the default workflow:
+  the rest of the toolkit reduces tokens without putting a proxy in your AI traffic.
 - **Full Caveman package:** the lightweight instruction file gives most of the benefit
   with no extra tooling. The full package stays an explicit opt-in (`aito setup`).
 

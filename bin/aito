@@ -49,7 +49,7 @@ AITO_VERSION="0.1.0"
 # Component catalog. Parallel arrays: id | label | default(on/off)
 # Installer lives at lib/components/<id>.sh and defines install_<id>().
 # ---------------------------------------------------------------------------
-CAT_IDS=(openspec rtk ccusage caveman codesight graphify repomix gh-aw)
+CAT_IDS=(openspec rtk ccusage caveman codesight graphify repomix gh-aw headroom)
 CAT_LABELS=(
   "OpenSpec — persistent spec/requirements/tasks layer (recommended)"
   "RTK — compress noisy terminal output, explicit mode (pilot)"
@@ -59,8 +59,9 @@ CAT_LABELS=(
   "Graphify — knowledge-graph repo map (optional alternative to Codesight)"
   "Repomix — one-off repo export + token counting (optional)"
   "gh-aw — GitHub Agentic Workflows automation (optional, later)"
+  "Headroom — AI-traffic compression PROXY (advanced; Copilot CLI; off by default)"
 )
-CAT_DEFAULTS=(on on on off off off off off)
+CAT_DEFAULTS=(on on on off off off off off off)
 
 # ---------------------------------------------------------------------------
 # setup
