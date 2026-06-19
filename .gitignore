@@ -1,0 +1,12 @@
+# dev artifacts
+*.bak
+token-report.md
+repomix-output.*
+graphify-out/
+.codesight/
+
+# OS / editor
+.DS_Store
+
+# node (only if a component is exercised locally)
+node_modules/

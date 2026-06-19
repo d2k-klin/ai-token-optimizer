@@ -1,0 +1,20 @@
+schema: spec-driven
+
+context: |
+  Follow existing repository patterns.
+  Avoid new dependencies unless justified.
+  Never include secrets in generated artifacts.
+
+rules:
+  proposal:
+    - Define objective, scope, exclusions, and measurable acceptance criteria.
+    - Identify affected application, data, infrastructure, and security areas.
+  specs:
+    - Use testable behavioral scenarios.
+    - Include authorization and failure behavior when relevant.
+  design:
+    - Record important alternatives and the reason for the selected approach.
+    - Include migration and rollback handling for data or infrastructure changes.
+  tasks:
+    - Keep tasks independently implementable and verifiable.
+    - Separate application, infrastructure, migration, and test work.

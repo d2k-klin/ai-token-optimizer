@@ -1,0 +1,168 @@
+#!/usr/bin/env bash
+# aito — token-efficient AI coding setup CLI.
+# Usage: aito <command> [args]
+#   setup            Interactively install/configure tooling in the current project
+#   verify           Measure token reduction; write token-report.md
+#   doctor           Check config files, token budgets, and tool availability
+#   learn "<lesson>" Append a deduped lesson to this project's playbook.md (ACE-style)
+#   env              Print detected environment
+#   version | help
+#
+# Bash 3.2+ compatible. No network access except inside component installers.
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# Resolve AITO_HOME (the project root) following symlinks — portable, no readlink -f.
+# ---------------------------------------------------------------------------
+_resolve_self() {
+  local src="${BASH_SOURCE[0]}" dir
+  while [ -h "$src" ]; do
+    dir="$(cd -P "$(dirname "$src")" && pwd)"
+    src="$(readlink "$src")"
+    case "$src" in /*) ;; *) src="$dir/$src" ;; esac
+  done
+  cd -P "$(dirname "$src")" && pwd
+}
+AITO_BIN_DIR="$(_resolve_self)"
+AITO_HOME="${AITO_HOME:-$(cd "$AITO_BIN_DIR/.." && pwd)}"
+AITO_LIB="$AITO_HOME/lib"
+AITO_TEMPLATES="$AITO_HOME/templates"
+export AITO_HOME AITO_LIB AITO_TEMPLATES
+
+# shellcheck source=lib/common.sh
+. "$AITO_LIB/common.sh"
+# shellcheck source=lib/detect.sh
+. "$AITO_LIB/detect.sh"
+# shellcheck source=lib/ui.sh
+. "$AITO_LIB/ui.sh"
+# shellcheck source=lib/tokens.sh
+. "$AITO_LIB/tokens.sh"
+# shellcheck source=lib/playbook.sh
+. "$AITO_LIB/playbook.sh"
+# shellcheck source=lib/verify.sh
+. "$AITO_LIB/verify.sh"
+
+AITO_VERSION="0.1.0"
+
+# ---------------------------------------------------------------------------
+# Component catalog. Parallel arrays: id | label | default(on/off)
+# Installer lives at lib/components/<id>.sh and defines install_<id>().
+# ---------------------------------------------------------------------------
+CAT_IDS=(openspec rtk ccusage caveman codesight graphify repomix gh-aw)
+CAT_LABELS=(
+  "OpenSpec — persistent spec/requirements/tasks layer (recommended)"
+  "RTK — compress noisy terminal output, explicit mode (pilot)"
+  "ccusage — local token-usage & cost monitor (recommended, read-only)"
+  "Caveman — full concise-output package (optional; lite version always applied)"
+  "Codesight — AST repo map / wiki (optional, only if exploration is weak)"
+  "Graphify — knowledge-graph repo map (optional alternative to Codesight)"
+  "Repomix — one-off repo export + token counting (optional)"
+  "gh-aw — GitHub Agentic Workflows automation (optional, later)"
+)
+CAT_DEFAULTS=(on on on off off off off off)
+
+# ---------------------------------------------------------------------------
+# setup
+# ---------------------------------------------------------------------------
+cmd_setup() {
+  detect_all
+  print_env
+  [ "$AITO_HAS_GIT" = 1 ] || warn "git not found — file backups still work, but VCS is recommended"
+  [ -d .git ] || warn "current directory is not a git repository: $(pwd)"
+
+  # 1) Pick track(s)
+  MENU_IDS=(copilot claude)
+  MENU_LABELS=("GitHub Copilot (.github/copilot-instructions.md + prompt files)" \
+               "Claude Code (CLAUDE.md + .claude config)")
+  MENU_DEFAULTS=(on on)
+  menu_checkbox "Select AI assistant track(s) to configure:"
+  local tracks="$MENU_SELECTED"
+  if [ -z "$(printf '%s' "$tracks" | tr -d '[:space:]')" ]; then
+    die "no track selected; nothing to do"
+  fi
+
+  # 2) Pick components
+  MENU_IDS=("${CAT_IDS[@]}")
+  MENU_LABELS=("${CAT_LABELS[@]}")
+  MENU_DEFAULTS=("${CAT_DEFAULTS[@]}")
+  menu_checkbox "Select tools to install (Space toggles; recommended are pre-checked):"
+  local components="$MENU_SELECTED"
+
+  # 3) Install selected components
+  step "Installing components"
+  local id
+  for id in $components; do
+    local f="$AITO_LIB/components/$id.sh"
+    if [ -f "$f" ]; then
+      # shellcheck source=/dev/null
+      . "$f"
+      "install_${id//-/_}" || warn "component '$id' reported a problem (continuing)"
+    else
+      warn "no installer for component: $id"
+    fi
+  done
+
+  # 4) Apply track profiles (always writes Caveman-lite instruction files + playbook)
+  step "Applying instruction files"
+  if printf '%s\n' "$tracks" | grep -Fqx copilot; then
+    # shellcheck source=lib/profiles/copilot.sh
+    . "$AITO_LIB/profiles/copilot.sh"; apply_copilot_profile
+  fi
+  if printf '%s\n' "$tracks" | grep -Fqx claude; then
+    # shellcheck source=lib/profiles/claude.sh
+    . "$AITO_LIB/profiles/claude.sh"; apply_claude_profile
+  fi
+
+  playbook_init
+
+  # 5) Verify token reduction
+  step "Verifying token reduction"
+  cmd_verify || warn "verification reported warnings — see token-report.md"
+
+  step "Done"
+  ok "Setup complete in $(pwd)"
+  info "Next: review the written files, then commit. Run 'aito verify' anytime."
+}
+
+# ---------------------------------------------------------------------------
+# dispatch
+# ---------------------------------------------------------------------------
+cmd_help() {
+  cat <<EOF
+${C_BOLD}aito${C_RESET} — token-efficient AI coding setup CLI (v$AITO_VERSION)
+
+${C_BOLD}USAGE${C_RESET}
+  aito <command> [args]
+
+${C_BOLD}COMMANDS${C_RESET}
+  setup            Interactively install/configure tooling in the current project
+  verify           Measure token reduction; write token-report.md
+  doctor           Check config files, token budgets, and tool availability
+  learn "<lesson>" Append a deduped lesson to this project's playbook (ACE-style)
+  env              Print detected environment
+  version          Print version
+  help             Show this help
+
+${C_BOLD}ENV${C_RESET}
+  AITO_ASSUME_YES=1   non-interactive; pick recommended defaults
+  AITO_UI=plain       force the plain (read-based) selection UI
+  NO_COLOR=1          disable colored output
+EOF
+}
+
+main() {
+  local cmd="${1:-help}"; shift || true
+  case "$cmd" in
+    setup)   cmd_setup "$@" ;;
+    verify)  cmd_verify "$@" ;;
+    doctor)  cmd_doctor "$@" ;;
+    learn)   cmd_learn "$@" ;;
+    env)     print_env ;;
+    version|-v|--version) echo "aito $AITO_VERSION" ;;
+    help|-h|--help) cmd_help ;;
+    *) err "unknown command: $cmd"; echo; cmd_help; exit 1 ;;
+  esac
+}
+
+main "$@"

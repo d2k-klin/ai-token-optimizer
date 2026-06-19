@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck and bats
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y shellcheck bats
+
+      - name: ShellCheck
+        run: |
+          shellcheck -x bin/aito install.sh \
+            lib/common.sh lib/detect.sh lib/ui.sh lib/tokens.sh \
+            lib/playbook.sh lib/verify.sh \
+            lib/profiles/*.sh lib/components/*.sh
+
+      - name: Bats tests
+        run: bats tests/
+
+  # Smoke test on macOS too (stock bash 3.2 path, BSD userland differences).
+  macos-smoke:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: bats
+        run: brew install bats-core
+      - name: Bats tests
+        run: bats tests/

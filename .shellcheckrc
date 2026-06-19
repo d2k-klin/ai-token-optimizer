@@ -1,0 +1,10 @@
+# shellcheck configuration
+# SC1091: don't follow sourced files (resolved at runtime via AITO_LIB)
+disable=SC1091
+# SC2155: allow `local x="$(...)"` — readability over the rare masked-return case
+disable=SC2155
+# SC2034: shared color vars are consumed across files (per-file analysis can't see it)
+disable=SC2034
+# SC2015: `cmd && ok "..." || warn "..."` is intentional — ok/warn always return 0
+disable=SC2015
+shell=bash
