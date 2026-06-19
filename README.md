@@ -40,6 +40,25 @@ aito setup                                  # pick tools, get a measured report
   risky options off by default, `shellcheck`-clean with a mocked offline test suite.
 - **Cross-platform:** macOS / Linux, Bash 3.2+ (works with stock macOS bash).
 
+## Tools considered
+
+Each tool is selectable in `aito setup`. See [The Tools](docs/tools.md) for the full
+rundown and [Best Results](docs/best-results.md) for how to combine them.
+
+| Tool | What it does | In `aito` |
+|---|---|---|
+| [OpenSpec](https://github.com/Fission-AI/OpenSpec) | Persistent spec / requirements / design / tasks layer that keeps requirements stable across sessions. | Default |
+| [RTK](https://github.com/rtk-ai/rtk) | Compresses noisy terminal output (git, tests, builds, logs) before it enters model context. | Default |
+| [ccusage](https://github.com/ryoppippi/ccusage) | Local CLI that reports token usage and cost from your agent logs so you can watch the trend. | Default |
+| [Caveman](https://github.com/JuliusBrussee/caveman) | Adds concise-output instructions to cut response verbosity (a lite version is always applied). | Optional |
+| [Codesight](https://github.com/Houseofmvps/codesight) | Generates a compact AST-based repo map / wiki so the agent re-reads fewer files. | Optional |
+| [Graphify](https://github.com/safishamsi/graphify) | Maps code plus docs into a knowledge graph for relationship and architecture questions. | Optional |
+| [Repomix](https://github.com/yamadashy/repomix) | Packs the repo into one AI-friendly file with token counts, for one-off exports. | Optional |
+| [gh-aw](https://github.com/github/gh-aw) | Compiles natural-language workflows into GitHub Actions that run AI agents on events. | Optional |
+| [Headroom](https://github.com/chopratejas/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
+| [code2prompt](https://github.com/mufeedvh/code2prompt) | Packs a codebase into a single prompt with token counts and filtering (Repomix alternative). | Documented |
+| [LLMLingua](https://github.com/microsoft/LLMLingua) | Compresses prompts up to ~20× by dropping low-information tokens (advanced, for custom pipelines). | Documented |
+
 ## Privacy & safety
 
 This is deliberately boring, which is the point:
