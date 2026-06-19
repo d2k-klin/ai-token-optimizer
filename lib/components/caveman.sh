@@ -4,6 +4,9 @@
 # the concise-output instruction file (Caveman-lite) is ALWAYS written by the track
 # profiles. This installer only adds the upstream Caveman tooling if you explicitly
 # want it. See https://github.com/JuliusBrussee/caveman
+#
+# NOTE: The pip "caveman" package is an unrelated HTML5 manifest validator.
+# The real Caveman is installed via its curl|bash script and requires Node ≥18.
 
 install_caveman() {
   step "Caveman (full package — optional)"
@@ -12,14 +15,12 @@ install_caveman() {
     info "Skipped full Caveman; keeping the lightweight instruction-only approach."
     return 0
   fi
-  if have pipx; then
-    pipx install caveman >/dev/null 2>&1 && ok "installed caveman via pipx" \
-      || warn "pipx install failed — see the Caveman repo for manual steps"
-  elif have pip3; then
-    warn "prefer pipx; attempting pip3 --user install"
-    pip3 install --user caveman >/dev/null 2>&1 && ok "installed caveman via pip3" \
-      || warn "pip3 install failed — see the Caveman repo for manual steps"
-  else
-    warn "no pipx/pip3 found — install from https://github.com/JuliusBrussee/caveman"
+  if ! have node; then
+    warn "Node.js ≥18 required for Caveman — install Node first."
+    return 1
   fi
+  info "installing Caveman via official installer…"
+  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash >/dev/null 2>&1 \
+    && ok "installed Caveman" \
+    || warn "Caveman install failed — see https://github.com/JuliusBrussee/caveman"
 }

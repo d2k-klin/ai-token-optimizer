@@ -27,14 +27,15 @@ install_headroom() {
   fi
 
   if have headroom; then
-    ok "headroom already on PATH"
+    ok "headroom already on PATH ($(headroom --version 2>/dev/null || echo '?'))"
   elif have pipx; then
-    pipx install headroom >/dev/null 2>&1 \
+    info "installing headroom-ai via pipx…"
+    pipx install headroom-ai >/dev/null 2>&1 \
       && ok "installed headroom via pipx" \
       || warn "pipx install failed — see https://github.com/chopratejas/headroom for setup"
   elif have pip3; then
     warn "prefer pipx; attempting pip3 --user install"
-    pip3 install --user headroom >/dev/null 2>&1 \
+    pip3 install --user headroom-ai >/dev/null 2>&1 \
       && ok "installed headroom via pip3" \
       || warn "pip3 install failed — see https://github.com/chopratejas/headroom for setup"
   else

@@ -27,11 +27,12 @@ install_openspec() {
   else
     info "initializing OpenSpec in $(pwd)…"
     # Use --tools to avoid interactive prompts; default to github-copilot,claude.
-    local tools_flag="--tools github-copilot,claude"
+    # An array keeps the two args separate without relying on word-splitting.
+    local tools_flag=(--tools "github-copilot,claude")
     if have openspec; then
-      openspec init $tools_flag >/dev/null 2>&1 || warn "'openspec init' failed (run it manually)"
+      openspec init "${tools_flag[@]}" >/dev/null 2>&1 || warn "'openspec init' failed (run it manually)"
     else
-      npx --yes "$pkg@$ver" init $tools_flag >/dev/null 2>&1 || warn "'npx openspec init' failed (run it manually)"
+      npx --yes "$pkg@$ver" init "${tools_flag[@]}" >/dev/null 2>&1 || warn "'npx openspec init' failed (run it manually)"
     fi
   fi
 
