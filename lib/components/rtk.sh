@@ -13,16 +13,23 @@ install_rtk() {
   else
     # The npm "rtk" package is NOT the correct one (that's a release toolkit).
     # The real RTK (rtk-ai/rtk) is a Rust binary installed via brew or curl.
+    local installed=0
     if [ "$AITO_PKG" = "brew" ]; then
       info "installing rtk via Homebrew…"
-      brew install rtk >/dev/null 2>&1 \
-        && ok "installed rtk ($(rtk --version 2>/dev/null || echo '?'))" \
-        || { warn "brew install rtk failed — see https://github.com/rtk-ai/rtk for install steps"; return 1; }
-    else
+      if brew install rtk >/dev/null 2>&1 && have rtk; then
+        ok "installed rtk ($(rtk --version 2>/dev/null || echo '?'))"
+        installed=1
+      else
+        warn "brew install failed, falling back to install script…"
+      fi
+    fi
+    if [ "$installed" = 0 ]; then
       info "installing rtk via install script…"
-      curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh >/dev/null 2>&1 \
-        && ok "installed rtk" \
-        || { warn "rtk install failed — see https://github.com/rtk-ai/rtk for install steps"; return 1; }
+      if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh >/dev/null 2>&1 && have rtk; then
+        ok "installed rtk ($(rtk --version 2>/dev/null || echo '?'))"
+      else
+        warn "rtk install failed — see https://github.com/rtk-ai/rtk for install steps"; return 1
+      fi
     fi
   fi
 
