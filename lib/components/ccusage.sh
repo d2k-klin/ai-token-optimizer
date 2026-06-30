@@ -4,7 +4,8 @@
 # ~/.claude/projects/, GitHub Copilot CLI, Codex, Gemini CLI, …) and reports
 # daily/weekly/monthly/session token + cost totals. Local-only, nothing uploaded.
 # It is how you watch token usage trend DOWN after applying the other tools.
-# See https://github.com/ryoppippi/ccusage — override with AITO_CCUSAGE_VERSION.
+# See https://github.com/ccusage/ccusage — override with AITO_CCUSAGE_VERSION.
+# (The project moved from github.com/ryoppippi/ccusage to its own org as of v20.)
 
 install_ccusage() {
   step "ccusage (token-usage monitor)"

@@ -43,4 +43,7 @@ install_openspec() {
 
   info "Security: pin the version (AITO_OPENSPEC_VERSION) and review generated prompt files."
   info "Workflow: /opsx:propose → review → /opsx:apply → /opsx:verify → /opsx:archive"
+  # v1.5.0 adds 'Stores' (early beta) — a new spec/change layout that will replace the
+  # workspace/initiative model. It is opt-in; the default 'openspec init' flow above is
+  # unaffected. Avoid Stores until it stabilizes (upstream warns of breaking changes).
 }
