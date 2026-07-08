@@ -10,6 +10,7 @@ preservation** (exact errors, security warnings, and acceptance criteria stay in
 |---|---|---|
 | Concise instruction file | Low | A bad instruction influences every request |
 | ccusage (monitor) | Low | Reads local agent logs (incl. prompt text); uploads nothing |
+| Ponytail (plugin) | Low–medium | Host plugin with lifecycle hooks (runs Node scripts); "least code" bias must not trim validation/security code |
 | OpenSpec | Low–medium | Executable CLI; specs may hold sensitive detail |
 | RTK (explicit mode) | Low–medium | Filtered output may omit useful details |
 | RTK (auto hook) | Medium | Transparently rewrites shell commands — **off by default** |

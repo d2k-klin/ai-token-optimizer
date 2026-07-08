@@ -117,6 +117,30 @@ questions without re-grepping.
 
 ## Special-purpose & later
 
+### Ponytail — minimal-code ruleset plugin · **Optional**
+A ruleset plugin (<https://ponytail.dev>) that makes the agent write the *least code
+that works*, following a strict ladder: is the code necessary at all → reuse an existing
+pattern → standard library → native platform feature → an already-installed dependency →
+only then custom code. Installs as a plugin into **Claude Code** and **GitHub Copilot
+CLI** (16+ hosts supported upstream); native VS Code Copilot is covered via
+instruction-only adapters instead.
+
+- **Why it saves tokens:** it attacks *output* bloat at the source — less generated code
+  means fewer output tokens now, and a smaller codebase to re-read in every later
+  session. Complements Caveman-lite: Caveman trims prose, Ponytail trims code.
+- **Setup:** `aito setup` runs the plugin install (`claude plugin marketplace add
+  DietrichGebert/ponytail` + `claude plugin install ponytail@ponytail`; same shape for
+  Copilot CLI). If the host CLI isn't on PATH it prints the exact slash commands to run
+  inside the host. Node.js is only needed for optional lifecycle-hook notices.
+- **Use it:** intensity via `/ponytail lite|full|ultra|off` (default `full`; set
+  `PONYTAIL_DEFAULT_MODE` or `~/.config/ponytail/config.json` to change the default).
+  `/ponytail-review` audits the current diff for over-engineering, `/ponytail-audit`
+  scans the repo for bloat, `/ponytail-debt` tracks deferred shortcuts.
+- **Caution:** "least code" is a bias, not a law — don't let it argue away error
+  handling, input validation, or security controls; review its suggestions like any
+  other diff. Uninstall with `node scripts/uninstall.js` *before* removing the plugin
+  from the host.
+
 ### Repomix — one-off repo export + token counting · **Optional**
 Packages repository contents into an AI-friendly file and reports token counts.
 

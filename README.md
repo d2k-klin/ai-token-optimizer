@@ -51,6 +51,7 @@ rundown and [Best Results](docs/best-results.md) for how to combine them.
 | [RTK](https://github.com/rtk-ai/rtk) | Compresses noisy terminal output (git, tests, builds, logs) before it enters model context. | Default |
 | [ccusage](https://github.com/ryoppippi/ccusage) | Local CLI that reports token usage and cost from your agent logs so you can watch the trend. | Default |
 | [Caveman](https://github.com/JuliusBrussee/caveman) | Adds concise-output instructions to cut response verbosity (a lite version is always applied). | Optional |
+| [Ponytail](https://ponytail.dev) | Ruleset plugin that makes the agent write the least code that works (reuse → stdlib → platform → deps → custom). | Optional |
 | [Codesight](https://github.com/Houseofmvps/codesight) | Generates a compact AST-based repo map / wiki so the agent re-reads fewer files. | Optional |
 | [Graphify](https://github.com/safishamsi/graphify) | Maps code plus docs into a knowledge graph for relationship and architecture questions. | Optional |
 | [Repomix](https://github.com/yamadashy/repomix) | Packs the repo into one AI-friendly file with token counts, for one-off exports. | Optional |

@@ -22,6 +22,7 @@ code: ccusage's GitHub org move, and OpenSpec's opt-in Stores beta.
 | RTK | `0.43.0` | 2026-06-28 | brew / `install.sh` (Rust binary) | None |
 | ccusage | `20.0.14` | 2026-06-15 | `ccusage` (npm) | None — repo URL updated |
 | Caveman | `1.9.0` | 2026-06-12 | official `install.sh` | None |
+| Ponytail | `4.8.4` | 2026-06-29 | plugin marketplace (`DietrichGebert/ponytail`) | **New** — added as optional component |
 | Codesight | `1.18.0` | 2026-06-28 | `codesight` (npx) | None |
 | Graphify | `0.17.1` | 2026-06-23 | `@sentropic/graphify` (npx) | None |
 | Repomix | `1.16.0` | 2026-06-29 | `repomix` (npx) | None |
@@ -60,6 +61,17 @@ code: ccusage's GitHub org move, and OpenSpec's opt-in Stores beta.
 - Installed only on explicit opt-in via the official `install.sh`. No interface change.
 - ⚠️ Action: none.
 
+**Ponytail 4.8.4** — Minimal-code ruleset plugin (optional, **new in this release**).
+- Makes the agent write the least code that works (necessity → reuse → stdlib →
+  platform → deps → custom). Installs as a host plugin into Claude Code and Copilot CLI
+  via their plugin marketplaces; no npm global, so no `AITO_*_VERSION` pin — the
+  marketplace serves the latest release.
+- Intensity via `/ponytail lite|full|ultra|off` (default `full`; `PONYTAIL_DEFAULT_MODE`
+  or `~/.config/ponytail/config.json` overrides). Extra commands: `/ponytail-review`,
+  `/ponytail-audit`, `/ponytail-debt`, `/ponytail-help`.
+- ⚠️ Action: none — off by default in `aito setup`. Review its lifecycle hooks after
+  install; uninstall with `node scripts/uninstall.js` before removing the plugin.
+
 **Codesight 1.18.0** — AST-based repo map / static wiki (optional).
 - Run on demand via `npx codesight --wiki`. No interface change.
 - ⚠️ Action: none.
@@ -90,6 +102,14 @@ code: ccusage's GitHub org move, and OpenSpec's opt-in Stores beta.
 **LLMLingua 0.2.2** — Prompt compression for custom pipelines (documented, advanced).
 - Documentation reference only; not auto-installed. Unchanged upstream since 2024-04.
 - ⚠️ Action: none.
+
+### Added (this repo)
+
+- `lib/components/ponytail.sh`: new optional component installing the Ponytail
+  minimal-code ruleset plugin (<https://ponytail.dev>) into Claude Code and/or GitHub
+  Copilot CLI, with manual slash-command fallback when the host CLI isn't on PATH.
+  Wired into the `aito setup` catalog (off by default) and documented in
+  `docs/tools.md`, `docs/security.md`, and the README tools table.
 
 ### Changed (this repo)
 
