@@ -9,9 +9,51 @@ Legend: **Default ON** = pre-checked in `aito setup`; **Optional** = off until y
 
 ---
 
-## Core (recommended)
+## Default ON (pre-checked in `aito setup`)
 
-### OpenSpec — persistent spec / requirements / tasks layer · **Default ON**
+### Concise-output instructions ("Caveman-lite") — **Always applied by each track**
+A small, manually reviewed instruction block — `.github/copilot-instructions.md` for
+Copilot, `CLAUDE.md` for Claude Code — telling the assistant to be concise, work one
+task at a time, load context lazily, and preserve exact errors and security warnings.
+
+- **Why it saves tokens:** trims verbose responses and routine tool narration without a
+  proxy, while explicitly *not* compressing requirements, acceptance criteria, design
+  decisions, security findings, or error messages into ambiguous fragments.
+- **Note:** kept short on purpose — these files are re-sent on nearly every interaction,
+  so size compounds (the [conciseness gate](testing-token-reduction.md) enforces it).
+- **Full Caveman package (optional):** `aito setup` pre-checks the Caveman entry, but
+  installing the upstream curl-piped tooling (not just the lite instructions) is gated
+  behind its own explicit confirmation — see below.
+
+### Ponytail — minimal-code ruleset plugin · **Default ON**
+A ruleset plugin (<https://ponytail.dev>) that makes the agent write the *least code
+that works*, following a strict ladder: is the code necessary at all → reuse an existing
+pattern → standard library → native platform feature → an already-installed dependency →
+only then custom code. Installs as a plugin into **Claude Code** and **GitHub Copilot
+CLI** (16+ hosts supported upstream); native VS Code Copilot is covered via
+instruction-only adapters instead.
+
+- **Why it saves tokens:** it attacks *output* bloat at the source — less generated code
+  means fewer output tokens now, and a smaller codebase to re-read in every later
+  session. Complements Caveman-lite: Caveman trims prose, Ponytail trims code.
+- **Setup:** `aito setup` runs the plugin install (`claude plugin marketplace add
+  DietrichGebert/ponytail` + `claude plugin install ponytail@ponytail`; same shape for
+  Copilot CLI). If the host CLI isn't on PATH it prints the exact slash commands to run
+  inside the host. Node.js is only needed for optional lifecycle-hook notices.
+- **Use it:** intensity via `/ponytail lite|full|ultra|off` (default `full`; set
+  `PONYTAIL_DEFAULT_MODE` or `~/.config/ponytail/config.json` to change the default).
+  `/ponytail-review` audits the current diff for over-engineering, `/ponytail-audit`
+  scans the repo for bloat, `/ponytail-debt` tracks deferred shortcuts.
+- **Caution:** "least code" is a bias, not a law — don't let it argue away error
+  handling, input validation, or security controls; review its suggestions like any
+  other diff. Uninstall with `node scripts/uninstall.js` *before* removing the plugin
+  from the host.
+
+---
+
+## Core (optional)
+
+### OpenSpec — persistent spec / requirements / tasks layer · **Optional**
 A lightweight specification layer around a feature. One change holds a proposal,
 requirements & scenarios, design decisions, a task list, verification state, and
 archived history. For IDE assistants it exposes slash commands (`/opsx:propose`,
@@ -27,18 +69,7 @@ archived history. For IDE assistants it exposes slash commands (`/opsx:propose`,
   files; keep secrets and customer data out of specs. `openspec/` is source material.
 - **Config:** `openspec/config.yaml` (concise project context + authoring rules).
 
-### Concise-output instructions ("Caveman-lite") — **Always applied by each track**
-A small, manually reviewed instruction block — `.github/copilot-instructions.md` for
-Copilot, `CLAUDE.md` for Claude Code — telling the assistant to be concise, work one
-task at a time, load context lazily, and preserve exact errors and security warnings.
-
-- **Why it saves tokens:** trims verbose responses and routine tool narration without a
-  proxy, while explicitly *not* compressing requirements, acceptance criteria, design
-  decisions, security findings, or error messages into ambiguous fragments.
-- **Note:** kept short on purpose — these files are re-sent on nearly every interaction,
-  so size compounds (the [conciseness gate](testing-token-reduction.md) enforces it).
-
-### RTK — compress noisy terminal output · **Default ON (explicit mode)**
+### RTK — compress noisy terminal output · **Optional (explicit mode)**
 Filters and compresses shell-command output (git, test runners, `tsc`, `next build`,
 Docker, Kubernetes, logs) *before* it enters model context.
 
@@ -53,9 +84,9 @@ Docker, Kubernetes, logs) *before* it enters model context.
 
 ---
 
-## Monitoring (recommended)
+## Monitoring (optional)
 
-### ccusage — local token-usage & cost monitor · **Default ON**
+### ccusage — local token-usage & cost monitor · **Optional**
 A fast, local CLI that reads the usage logs coding-agent CLIs already write on your
 machine (Claude Code at `~/.claude/projects/`, plus GitHub Copilot CLI, Codex, Gemini
 CLI, and more) and turns them into daily / weekly / monthly / per-session token and cost
@@ -116,30 +147,6 @@ questions without re-grepping.
 ---
 
 ## Special-purpose & later
-
-### Ponytail — minimal-code ruleset plugin · **Optional**
-A ruleset plugin (<https://ponytail.dev>) that makes the agent write the *least code
-that works*, following a strict ladder: is the code necessary at all → reuse an existing
-pattern → standard library → native platform feature → an already-installed dependency →
-only then custom code. Installs as a plugin into **Claude Code** and **GitHub Copilot
-CLI** (16+ hosts supported upstream); native VS Code Copilot is covered via
-instruction-only adapters instead.
-
-- **Why it saves tokens:** it attacks *output* bloat at the source — less generated code
-  means fewer output tokens now, and a smaller codebase to re-read in every later
-  session. Complements Caveman-lite: Caveman trims prose, Ponytail trims code.
-- **Setup:** `aito setup` runs the plugin install (`claude plugin marketplace add
-  DietrichGebert/ponytail` + `claude plugin install ponytail@ponytail`; same shape for
-  Copilot CLI). If the host CLI isn't on PATH it prints the exact slash commands to run
-  inside the host. Node.js is only needed for optional lifecycle-hook notices.
-- **Use it:** intensity via `/ponytail lite|full|ultra|off` (default `full`; set
-  `PONYTAIL_DEFAULT_MODE` or `~/.config/ponytail/config.json` to change the default).
-  `/ponytail-review` audits the current diff for over-engineering, `/ponytail-audit`
-  scans the repo for bloat, `/ponytail-debt` tracks deferred shortcuts.
-- **Caution:** "least code" is a bias, not a law — don't let it argue away error
-  handling, input validation, or security controls; review its suggestions like any
-  other diff. Uninstall with `node scripts/uninstall.js` *before* removing the plugin
-  from the host.
 
 ### Repomix — one-off repo export + token counting · **Optional**
 Packages repository contents into an AI-friendly file and reports token counts.
@@ -212,10 +219,14 @@ baked into the Claude track's `CLAUDE.md` guidance.
 
 ## Default-off by design
 
+Only **Caveman-lite** and **Ponytail** are pre-checked in `aito setup`; every other tool
+on this page is off until you explicitly select it.
+
 - **Headroom** ships as an explicit opt-in (above), **not** part of the default workflow:
   the rest of the toolkit reduces tokens without putting a proxy in your AI traffic.
 - **Full Caveman package:** the lightweight instruction file gives most of the benefit
-  with no extra tooling. The full package stays an explicit opt-in (`aito setup`).
+  with no extra tooling. The full curl-piped package stays an explicit opt-in, gated
+  behind its own confirmation even when the Caveman entry is pre-checked (`aito setup`).
 
 See the [security model](security.md) for per-tool risk ratings, and
 [testing-token-reduction.md](testing-token-reduction.md) for how the savings are measured.

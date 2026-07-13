@@ -22,8 +22,9 @@ Works for both Copilot and Claude Code, on almost any project:
 | Evolving context | **ACE playbook** (auto) | re-deriving lessons each session |
 | Measurement | **ccusage** + `aito verify` | flying blind on actual usage |
 
-This is exactly what `aito setup` pre-checks. Pick your track(s), accept the defaults,
-and you have the baseline. Everything else is added **only on evidence of a specific
+`aito setup` only pre-checks Caveman and Ponytail by default; OpenSpec, RTK, and ccusage
+are one checkbox tick away, but you must select them explicitly to get this baseline.
+Everything beyond this baseline should be added **only on evidence of a specific
 problem.**
 
 ## Why these five combine well
