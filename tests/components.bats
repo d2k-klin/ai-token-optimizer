@@ -71,3 +71,85 @@ teardown() { teardown_aito_env; }
   grep -Fqx 'name: Custom OpenWiki workflow' .github/workflows/openwiki-update.yml
   [ ! -e .github/workflows/openwiki-update.yml.bak ]
 }
+
+@test "Serena installs a pinned release and configures the Claude Code track" {
+  export MOCK_LOG="$PROJECT/serena.log"
+  local tool
+  for tool in uv serena; do
+    printf '#!/usr/bin/env bash\nprintf "%%s\\t%%s\\n" "%s" "$*" >>"$MOCK_LOG"\nexit 0\n' \
+      "$tool" >"$MOCKBIN/$tool"
+    chmod +x "$MOCKBIN/$tool"
+  done
+  export tracks=claude AITO_SERENA_VERSION=1.6.1
+
+  # shellcheck source=lib/components/serena.sh
+  . "$AITO_LIB/components/serena.sh"
+  install_serena
+
+  grep -Fqx $'uv\ttool install --force -p 3.13 serena-agent==1.6.1' "$MOCK_LOG"
+  grep -Fqx $'serena\tsetup claude-code' "$MOCK_LOG"
+}
+
+@test "local retrieval components install without indexing or configuring agents" {
+  export MOCK_LOG="$PROJECT/retrieval.log"
+  local tool
+  for tool in node npm qmd codebase-memory-mcp; do
+    printf '#!/usr/bin/env bash\nprintf "%%s\\t%%s\\n" "%s" "$*" >>"$MOCK_LOG"\nexit 0\n' \
+      "$tool" >"$MOCKBIN/$tool"
+    chmod +x "$MOCKBIN/$tool"
+  done
+  export AITO_QMD_VERSION=2.5.3 AITO_CODEBASE_MEMORY_VERSION=0.9.0
+
+  # shellcheck source=lib/components/qmd.sh
+  . "$AITO_LIB/components/qmd.sh"
+  # shellcheck source=lib/components/codebase-memory.sh
+  . "$AITO_LIB/components/codebase-memory.sh"
+  install_qmd
+  install_codebase_memory
+
+  grep -Fqx $'npm\tinstall -g @tobilu/qmd@2.5.3' "$MOCK_LOG"
+  grep -Fqx $'npm\tinstall -g codebase-memory-mcp@0.9.0' "$MOCK_LOG"
+  ! grep -Fqx $'qmd\tembed' "$MOCK_LOG"
+  ! grep -Fqx $'codebase-memory-mcp\tinstall' "$MOCK_LOG"
+  grep -Fqx '.qmd/*.sqlite*' .gitignore
+  grep -Fqx '.codebase-memory/' .gitignore
+}
+
+@test "Claude-Mem uses the official npx installer only after privacy confirmation" {
+  export MOCK_LOG="$PROJECT/claude-mem.log"
+  printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf "%s\n" "$*" >>"$MOCK_LOG"' \
+    'exit 0' >"$MOCKBIN/npx"
+  chmod +x "$MOCKBIN/npx"
+  export tracks=claude AITO_CLAUDE_MEM_VERSION=13.12.4
+  confirm() { return 0; }
+
+  # shellcheck source=lib/components/claude-mem.sh
+  . "$AITO_LIB/components/claude-mem.sh"
+  install_claude_mem
+
+  grep -Fqx -- '--yes claude-mem@13.12.4 install' "$MOCK_LOG"
+}
+
+@test "grepai prefers Homebrew and leaves provider initialization to the user" {
+  export MOCK_LOG="$PROJECT/grepai.log"
+  printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf "brew\t%s\n" "$*" >>"$MOCK_LOG"' \
+    'case "$1" in upgrade) exit 1;; *) exit 0;; esac' >"$MOCKBIN/brew"
+  printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf "grepai\t%s\n" "$*" >>"$MOCK_LOG"' \
+    'exit 0' >"$MOCKBIN/grepai"
+  chmod +x "$MOCKBIN/brew" "$MOCKBIN/grepai"
+  export AITO_PKG=brew
+
+  # shellcheck source=lib/components/grepai.sh
+  . "$AITO_LIB/components/grepai.sh"
+  install_grepai
+
+  grep -Fqx $'brew\tinstall yoanbernabeu/tap/grepai' "$MOCK_LOG"
+  ! grep -Fqx $'grepai\tinit' "$MOCK_LOG"
+  grep -Fqx '.grepai/index.gob' .gitignore
+}

@@ -28,6 +28,9 @@ teardown() { teardown_aito_env; }
   [ -f .vscode/settings.json ]
   [ -f token-report.md ]
   [ ! -e .github/workflows/openwiki-update.yml ]
+  ! grep -Fq '.codebase-memory/' .gitignore
+  ! grep -Fq '.qmd/' .gitignore
+  ! grep -Fq '.grepai/' .gitignore
 }
 
 @test "setup is idempotent (re-run, no dup gitignore lines)" {

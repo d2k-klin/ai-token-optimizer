@@ -145,7 +145,89 @@ the Curator-lite step that appends a deduplicated, dated bullet.
 
 ---
 
-## Optional repository maps (add only if exploration is weak — pick ONE)
+## Smart retrieval (before context reaches the model)
+
+The cheapest context is context never loaded. Start with **one primary code retriever**:
+Serena for symbol-aware navigation/editing, Codebase-Memory-MCP for structural graph
+queries, or grepai for semantic concept search. QMD is complementary because it searches
+documentation rather than source structure.
+
+### Serena — LSP symbol retrieval and editing · **Optional**
+[Serena](https://github.com/oraios/serena) exposes symbol lookup, references,
+definitions, and symbol-level edits through language servers and MCP.
+
+- **Why it saves tokens:** the agent can request one function/class and its references
+  instead of opening several whole files. It is strongest on medium/large repositories
+  where exact symbol relationships matter.
+- **Setup:** `aito` installs the current `serena-agent` with `uv`/Python 3.13. It can run
+  `serena setup claude-code`; VS Code Copilot uses **MCP: Add Server** with the command
+  printed by setup.
+- **Caution/privacy:** Serena tools can edit code, so keep normal approval/review
+  boundaries. It reports minimal anonymous startup metrics by default; export
+  `SERENA_USAGE_REPORTING=false` to opt out.
+
+### Codebase-Memory-MCP — local structural code graph · **Optional**
+[Codebase-Memory-MCP](https://github.com/DeusData/codebase-memory-mcp) indexes code with
+Tree-sitter into a persistent local graph of symbols, imports, call chains, routes, and
+cross-service links.
+
+- **Why it saves tokens:** structural questions become small graph queries rather than
+  repeated file exploration. Its accompanying
+  [evaluation](https://arxiv.org/abs/2603.27277) reports lower answer quality than
+  conventional exploration (83% vs. 92%), but roughly 10× fewer tokens—use raw source
+  verification for high-stakes changes.
+- **Setup:** `aito` installs the npm/native wrapper, then separately asks before running
+  its configurator because that command modifies detected agent MCP configs,
+  instructions, skills, and hooks and starts a coordination daemon when used.
+- **Privacy:** indexing is local. `.codebase-memory/` is ignored by default because the
+  graph concentrates repository structure; remove the ignore deliberately if your team
+  chooses to share the compressed graph artifact.
+
+### QMD — local hybrid documentation search · **Optional**
+[QMD](https://github.com/tobi/qmd) combines BM25, vector search, and local LLM reranking
+over Markdown collections.
+
+- **Why it saves tokens:** OpenWiki, OpenSpec, ADRs, playbooks, and `docs/` can grow into
+  another context dump. QMD retrieves the relevant chunks instead.
+- **Setup:** `aito` installs `@tobilu/qmd` (Node.js 22+), but leaves `qmd init`,
+  collection selection, and `qmd embed` to you. This avoids an unexpected download of
+  about 2 GB of local GGUF models.
+- **Privacy:** search and inference are local. The project SQLite index is ignored by
+  default; review collection paths so secrets and unrelated personal notes are excluded.
+
+### grepai — semantic code search and call graphs · **Optional**
+[grepai](https://github.com/yoanbernabeu/grepai) searches code by intent and traces
+callers/callees.
+
+- **Choose it when:** fuzzy concept search is more useful than Serena's exact symbols or
+  Codebase-Memory's structural graph. Do not run all three without evidence that their
+  separate indexes pay for themselves.
+- **Setup/privacy:** `aito` uses Homebrew or a pinned Go build, then leaves
+  `grepai init` to you. Ollama and LM Studio keep embeddings local; the OpenAI option
+  sends indexed code chunks to that provider. `.grepai/index.gob` is ignored.
+
+---
+
+## Session memory (persistent and opt-in)
+
+### Claude-Mem — compressed cross-session observations · **Optional**
+[Claude-Mem](https://github.com/thedotmack/claude-mem) captures tool observations and
+session events, summarizes them, and progressively retrieves relevant history later.
+
+- **Different from existing layers:** OpenWiki remembers the codebase, OpenSpec remembers
+  the approved work, and Claude-Mem remembers what the agent previously discovered or
+  did.
+- **Setup:** for the Claude Code track, `aito` uses the official
+  `npx claude-mem@<version> install` path. A global npm install alone is only the SDK and
+  does not register hooks or the local worker.
+- **Privacy/cost:** it can persist prompts, code changes, and tool output and uses model
+  calls to compress them. Setup is off by default and double-confirmed. Keep the worker
+  local, inspect retention/configuration, and wrap sensitive material in
+  `<private>...</private>` so it is not stored.
+
+---
+
+## Optional repository maps (add only if exploration is weak)
 
 ### Codesight — AST-based repo map / wiki · **Optional**
 Generates compact, framework-aware codebase context as small topic pages (`auth.md`,
@@ -195,11 +277,24 @@ events or schedules (issue triage, stale-doc checks, weekly summaries, policy ch
 
 ---
 
-## Advanced & alternatives (documented, not auto-installed)
+## Advanced, complementary & alternatives
 
-These are genuinely useful but are intentionally **not** wired into `aito setup` — either
-they overlap with an included tool, or they transform content in ways that carry the same
-evidence-loss risk the project avoids elsewhere. Reach for them deliberately.
+Most tools in this section are documented rather than installed because they overlap
+with an included tool, are complementary remote services, or transform content in ways
+that carry evidence-loss risk. Headroom is selectable but remains off and double-gated.
+
+### Context7 — current library/API documentation · *complementary*
+[Context7](https://github.com/upstash/context7) retrieves targeted, version-aware
+library documentation instead of making the agent search broadly or rely on stale model
+knowledge.
+
+- **Why it is documented only:** it primarily improves context quality and reduces
+  hallucinations; it is a remote documentation service, not a repository token
+  optimizer.
+- **Use:** `npx ctx7 setup` (Node.js 18+) installs its skill or MCP integration and
+  authenticates via OAuth. An API key is recommended for higher limits.
+- **Privacy:** library names and documentation queries leave the machine. Avoid placing
+  proprietary code, secrets, or customer data in those queries.
 
 ### code2prompt — codebase → prompt packer · *alternative to Repomix*
 A fast packer (Rust/CLI) that turns a codebase into a single prompt with token counts and
@@ -250,7 +345,7 @@ baked into the Claude track's `CLAUDE.md` guidance.
 ## Default-off by design
 
 **Caveman**, **Ponytail**, and **OpenWiki** are pre-checked in `aito setup`; every other
-tool on this page is off until you explicitly select it. OpenWiki's separate automation
+selectable tool is off until you explicitly select it. OpenWiki's separate automation
 workflow remains off until you confirm it.
 
 - **Headroom** ships as an explicit opt-in (above), **not** part of the default workflow:

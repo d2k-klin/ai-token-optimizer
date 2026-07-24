@@ -49,12 +49,17 @@ AITO_VERSION="0.1.0"
 # Component catalog. Parallel arrays: id | label | default(on/off)
 # Installer lives at lib/components/<id>.sh and defines install_<id>().
 # ---------------------------------------------------------------------------
-CAT_IDS=(caveman ponytail openwiki openspec rtk ccusage codesight graphify repomix gh-aw headroom)
+CAT_IDS=(caveman ponytail openwiki openspec serena codebase-memory qmd grepai claude-mem rtk ccusage codesight graphify repomix gh-aw headroom)
 CAT_LABELS=(
   "Caveman — full concise-output package (default; lite version always applied)"
   "Ponytail — minimal-code ruleset plugin (default; Claude Code / Copilot CLI)"
   "OpenWiki — maintained agent documentation (default; GitHub Action optional)"
   "OpenSpec — persistent spec/requirements/tasks layer (optional)"
+  "Serena — LSP symbol retrieval/editing (optional; pick one primary code retriever)"
+  "Codebase-Memory-MCP — local structural code graph (optional retrieval alternative)"
+  "QMD — local hybrid search over OpenWiki/OpenSpec/docs (optional)"
+  "grepai — semantic code search + call graphs (optional retrieval alternative)"
+  "Claude-Mem — compressed cross-session agent memory (optional; persistent/background)"
   "RTK — compress noisy terminal output, explicit mode (pilot, optional)"
   "ccusage — local token-usage & cost monitor (optional, read-only)"
   "Codesight — AST repo map / wiki (optional, only if exploration is weak)"
@@ -63,7 +68,7 @@ CAT_LABELS=(
   "gh-aw — GitHub Agentic Workflows automation (optional, later)"
   "Headroom — AI-traffic compression PROXY (advanced; supported agents; off by default)"
 )
-CAT_DEFAULTS=(on on on off off off off off off off off)
+CAT_DEFAULTS=(on on on off off off off off off off off off off off off off)
 
 # ---------------------------------------------------------------------------
 # setup

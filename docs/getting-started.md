@@ -18,8 +18,9 @@ repository. This guide takes you from zero to a configured project.
 
 | Recommended | Enables |
 |---|---|
-| **Node.js 22+ + npm** | OpenWiki, OpenSpec, Repomix, Codesight, Graphify, ccusage, and full Caveman. Node 22 satisfies every current Node-based component. |
-| **Homebrew or `curl`** | Installing the RTK Rust binary (RTK is not the npm package named `rtk`). |
+| **Node.js 22+ + npm** | OpenWiki, OpenSpec, Claude-Mem, Codebase-Memory-MCP, QMD, Repomix, Codesight, Graphify, ccusage, and full Caveman. Node 22 satisfies every current Node-based component. |
+| **`uv`** | Installing Serena with its supported Python 3.13 tool environment. |
+| **Homebrew, Go 1.24+, or `curl`** | grepai uses Homebrew/Go; RTK uses Homebrew or its official installer. |
 | **jq** | Deep-merging VS Code `settings.json` instead of printing keys to add. |
 | **python3 + `tiktoken`** | Exact token counts (otherwise a labeled chars/4 estimate). |
 | **VS Code `code` CLI** | Auto-installing the Copilot / Claude Code extensions. |
@@ -28,9 +29,10 @@ repository. This guide takes you from zero to a configured project.
 Nothing in the recommended list is mandatory — `aito` degrades gracefully and tells you
 what it skipped.
 
-The individual minimums are OpenWiki and Repomix Node 22+, OpenSpec 20.19+, Graphify
-20+, and Codesight 18+. Python 3.13 is recommended if you opt into Headroom; Python
-3.10+ is its hard minimum.
+The individual minimums are OpenWiki, QMD, and Repomix Node 22+; Claude-Mem 20.12+;
+OpenSpec 20.19+; Graphify 20+; and Codebase-Memory-MCP/Codesight 18+. QMD's optional
+embedding step downloads about 2 GB of models. Python 3.13 is used for Serena and
+recommended for Headroom; Headroom's hard minimum is Python 3.10.
 
 ## 2. Install the CLI
 
@@ -92,10 +94,14 @@ change.
 You'll be asked two things:
 
 1. **Track(s)** — GitHub Copilot, Claude Code, or both.
-2. **Tools** — Caveman, Ponytail, OpenWiki, OpenSpec, RTK, ccusage, Codesight, Graphify,
-   Repomix, gh-aw, Headroom. **Caveman**, **Ponytail**, and **OpenWiki** are pre-checked
-   by default; everything else (OpenSpec, RTK, ccusage, repo-mappers, automation, the
-   Headroom proxy) is off unless you explicitly select it.
+2. **Tools** — Caveman, Ponytail, OpenWiki, OpenSpec, Serena, Codebase-Memory-MCP, QMD,
+   grepai, Claude-Mem, RTK, ccusage, Codesight, Graphify, Repomix, gh-aw, and Headroom.
+   **Caveman**, **Ponytail**, and **OpenWiki** are pre-checked by default; everything
+   else is off unless you explicitly select it.
+
+For code retrieval, start with **one** of Serena, Codebase-Memory-MCP, or grepai. QMD can
+sit beside one of them because it targets Markdown knowledge. Claude-Mem is separate
+cross-session memory and has an additional privacy confirmation.
 
 After OpenWiki installs, setup separately asks whether to add its scheduled
 documentation-update GitHub Action. That prompt defaults to **no**; Headroom and the full

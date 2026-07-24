@@ -43,6 +43,22 @@ repository knowledge reusable; RTK compresses the *inputs* (often larger than th
 model's replies). The ACE playbook keeps cheap persistent context improving instead of
 being rebuilt. ccusage proves the trend is going the right way.
 
+## Retrieval comes before compression
+
+Before compressing a 20,000-token file exploration, avoid loading it:
+
+| Need | Start with |
+|---|---|
+| Exact symbols, references, and code edits | **Serena** |
+| Structural call/import/route graph | **Codebase-Memory-MCP** |
+| Fuzzy semantic code search and call traces | **grepai** |
+| Search across OpenWiki/OpenSpec/ADRs/docs | **QMD** |
+| Reuse discoveries from earlier Claude Code sessions | **Claude-Mem** |
+| Current external library/API documentation | **Context7** (documented only) |
+
+Use one primary code retriever, then measure whether it reduces file reads. QMD and
+Claude-Mem solve separate documentation/session-memory problems and can be added later.
+
 ## Track recipes
 
 ### GitHub Copilot in VS Code
@@ -65,17 +81,26 @@ OpenSpec  +  CLAUDE.md  +  ACE playbook  +  RTK (explicit)  +  ccusage
 
 | Symptom you actually observe | Add | Notes |
 |---|---|---|
-| Agent re-reads many files every task; misses blast radius | **Codesight** *or* **Graphify** | Pick **one**. Codesight for Next.js/TS; Graphify for mixed code+docs+diagrams. Start with the static wiki/graph, not a server. |
+| Agent opens whole files to find exact symbols/references | **Serena** | Best first retrieval pilot for medium/large codebases. |
+| Agent repeatedly reconstructs call graphs/routes/imports | **Codebase-Memory-MCP** | Local deterministic structural graph; verify source for high-stakes answers. |
+| Agent needs fuzzy “where is this concept?” search | **grepai** | Use a local embedder unless cloud code transfer is approved. |
+| OpenWiki/OpenSpec/docs have become large | **QMD** | Local hybrid retrieval; models use about 2 GB. |
+| Claude Code repeats discoveries across sessions | **Claude-Mem** | Persistent session capture; privacy-review before enabling. |
+| Agent needs current third-party API docs | **Context7** | Complementary remote service; keep proprietary details out of queries. |
+| Need a static/broad repo map | **Codesight** *or* **Graphify** | Codesight for Next.js/TS; Graphify for mixed code+docs+diagrams. |
 | Need an external review or a one-time architecture snapshot | **Repomix** | One-off only. Never attach a full pack to every prompt. |
 | A recurring, low-risk repo chore worth automating | **gh-aw** | Later. Read-only first, narrow triggers, approval gates. |
 | You want extreme compression in a custom RAG pipeline | **LLMLingua** | Advanced; you own the inputs and measure quality. Not for IDE chat or error/security paths. See [tools.md](tools.md). |
 
 ## Project-type quick picks
 
-- **Next.js / TypeScript app:** baseline; if exploration is weak, add **Codesight**.
+- **Next.js / TypeScript app:** baseline; add **Serena** for symbol work or **Codesight**
+  when a static framework-aware map is enough.
 - **Polyglot / monorepo / lots of docs & diagrams:** baseline; if exploration is weak,
-  add **Graphify**.
-- **Library / small codebase:** baseline minus mappers — targeted context is already small.
+  pilot **Codebase-Memory-MCP**; use **Graphify** only when non-code material matters.
+- **Documentation-heavy project:** add **QMD** after OpenWiki/OpenSpec content grows.
+- **Library / small codebase:** baseline minus retrievers/mappers—targeted context is
+  already small.
 - **Infra / security-heavy:** baseline, but prefer **raw** output (not RTK) for IAM,
   Terraform, and security failures; keep evidence intact.
 
@@ -83,17 +108,21 @@ OpenSpec  +  CLAUDE.md  +  ACE playbook  +  RTK (explicit)  +  ccusage
 
 1. **Baseline** for a few real features. Watch: retries, unrelated edits, repeated file
    reads, chat length, and `ccusage` totals.
-2. **RTK pilot** — confirm explicit-mode compression helps without causing re-fetches;
-   only then consider the automatic hook.
-3. **One repository map** — add Codesight *or* Graphify *only if* exploration stays a
-   problem. Trial one at a time.
-4. **Automation** — add gh-aw last, for a clearly recurring task.
+2. **One retrieval pilot** — add Serena, Codebase-Memory-MCP, or grepai only if source
+   exploration is costly. Trial one at a time.
+3. **QMD or Claude-Mem** — add only when documentation or cross-session rediscovery is
+   the measured bottleneck.
+4. **RTK pilot** — confirm compression helps without causing re-fetches; only then
+   consider the automatic hook.
+5. **Automation** — add gh-aw last, for a clearly recurring task.
 
 Re-run `aito verify` at each step and compare `token-report.md` + `ccusage` trend.
 
 ## Combinations to avoid
 
-- **Two repo mappers at once** (Codesight *and* Graphify) — competing, stale-prone maps.
+- **Several code retrievers/maps at once** — Serena, Codebase-Memory-MCP, grepai,
+  Codesight, and Graphify overlap. Start with one primary tool and add another only for
+  a distinct measured gap.
 - **Repomix as permanent context** — defeats targeted retrieval; it's a one-off tool.
 - **RTK auto-hook before piloting** — can hide evidence or trigger re-fetches.
 - **A compression proxy in the IDE path** (Headroom) or **LLMLingua on error/security

@@ -55,6 +55,10 @@ the persistent artifacts you'd actually load for a task. Demonstrates the payoff
 **lazy/targeted context** instead of dumping the repo into the model. On a small repo
 there may be no net saving yet; the gap grows with codebase size.
 
+Serena, Codebase-Memory-MCP, QMD, and grepai operationalize this gate by retrieving a
+symbol, graph result, or document chunk. `aito verify` does not invent a savings number
+for them; compare file reads/tool-call tokens on representative tasks before and after.
+
 ### 4. Persistent-artifact footprint
 Totals the tokens held in durable files (`copilot-instructions.md`, `CLAUDE.md`,
 `ai-playbook.md`, `openspec/config.yaml`). These replace ad-hoc chat re-explanation —

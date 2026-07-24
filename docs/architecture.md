@@ -14,7 +14,7 @@ bash install.sh ─► copy toolkit to ~/.local/share + launcher on PATH
         aito setup ─────┤  (run inside a target project)
                         ├─ detect env (OS, pkg mgr, node, gh, code, jq, tiktoken)
                         ├─ pick track(s):  Copilot / Claude Code / both
-                        ├─ pick tools:     OpenWiki, OpenSpec, RTK, … (checkboxes)
+                        ├─ pick tools:     OpenWiki, retrieval, memory, RTK, … (checkboxes)
                         ├─ run selected component installers   (idempotent, safe)
                         ├─ apply track profiles → instruction + VS Code files
                         ├─ init ACE playbook (docs/ai-playbook.md)
@@ -47,7 +47,8 @@ bin/aito  (dispatcher)
   identical content and backs up a differing file to `*.bak` before replacing it.
   VS Code settings are deep-merged (jq), never clobbered.
 - **Safe defaults.** Non-interactive runs accept the *recommended default* for each
-  prompt, not a blanket "yes" — risky opt-ins (e.g. RTK's auto Copilot hook) stay off.
+  prompt, not a blanket "yes"—retrieval/session-memory tools and risky opt-ins (e.g.
+  RTK's auto Copilot hook) stay off.
 - **Best-available, graceful degradation.** Token counting, the selection UI, and JSON
   merging each detect the best tool present and fall back cleanly.
 - **Explicit network boundaries.** Components use package managers and version overrides

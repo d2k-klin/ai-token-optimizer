@@ -18,9 +18,10 @@ an established repository. `aito` configures the AI-development layer; your norm
 framework or project generator still creates the application itself.
 
 It doesn't reinvent anything — it's a **summarized setup of the available tools for token
-optimization during development**: a curated set (OpenWiki, OpenSpec, RTK, ccusage, and
-more) wired together behind an interactive menu with safe defaults. It lays down concise
-instruction files for each assistant and writes a `token-report.md` you can actually read.
+optimization during development**: a curated set (OpenWiki, Serena, OpenSpec, RTK,
+ccusage, and more) wired together behind an interactive menu with safe defaults. It lays
+down concise instruction files for each assistant and writes a `token-report.md` you can
+actually read.
 
 ```bash
 git clone https://github.com/d2k-klin/ai-token-optimizer.git
@@ -37,6 +38,8 @@ aito setup                                  # pick tools, get a measured report
 
 - **It measures, it doesn't promise.** No invented "saves 70%!" headline — `aito verify`
   reports real token counts and a PASS/WARN verdict you can reproduce.
+- **Retrieval before compression.** Serena, Codebase-Memory-MCP, QMD, and grepai can
+  retrieve a symbol, relationship, or document instead of loading whole files first.
 - **No telemetry or proxy in `aito` itself.** It runs offline except the component
   installs you explicitly choose. Headroom is opt-in and off by default; third-party
   telemetry is called out below. See [Privacy & safety](#privacy--safety).
@@ -49,8 +52,9 @@ aito setup                                  # pick tools, get a measured report
 
 ## Tools considered
 
-Each tool is selectable in `aito setup`. See [The Tools](docs/tools.md) for the full
-rundown and [Best Results](docs/best-results.md) for how to combine them.
+Selectable tools and documented complements are listed below. See
+[The Tools](docs/tools.md) for the full rundown and
+[Best Results](docs/best-results.md) for how to combine them.
 
 | Tool | What it does | In `aito` |
 |---|---|---|
@@ -58,6 +62,11 @@ rundown and [Best Results](docs/best-results.md) for how to combine them.
 | [Ponytail](https://ponytail.dev) | Ruleset plugin that makes the agent write the least code that works (reuse → stdlib → platform → deps → custom). | Default |
 | [OpenWiki](https://github.com/langchain-ai/openwiki) | Generates and maintains local codebase documentation for coding agents; optional scheduled PR updates. | Default |
 | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | Persistent spec / requirements / design / tasks layer that keeps requirements stable across sessions. | Optional |
+| [Serena](https://github.com/oraios/serena) | Retrieves and edits precise code symbols and references through language servers. | Optional |
+| [Codebase-Memory-MCP](https://github.com/DeusData/codebase-memory-mcp) | Builds a local structural code graph for fast relationship and impact queries. | Optional |
+| [QMD](https://github.com/tobi/qmd) | Runs local BM25 + vector + reranked search over OpenWiki, OpenSpec, and other Markdown. | Optional |
+| [grepai](https://github.com/yoanbernabeu/grepai) | Provides semantic code search and call graphs with local or cloud embeddings. | Optional |
+| [Claude-Mem](https://github.com/thedotmack/claude-mem) | Compresses and retrieves agent observations across Claude Code sessions. | Optional (warned) |
 | [RTK](https://github.com/rtk-ai/rtk) | Compresses noisy terminal output (git, tests, builds, logs) before it enters model context. | Optional |
 | [ccusage](https://github.com/ccusage/ccusage) | Local CLI that reports token usage and cost from your agent logs so you can watch the trend. | Optional |
 | [Codesight](https://github.com/Houseofmvps/codesight) | Generates a compact AST-based repo map / wiki so the agent re-reads fewer files. | Optional |
@@ -65,8 +74,19 @@ rundown and [Best Results](docs/best-results.md) for how to combine them.
 | [Repomix](https://github.com/yamadashy/repomix) | Packs the repo into one AI-friendly file with token counts, for one-off exports. | Optional |
 | [gh-aw](https://github.com/github/gh-aw) | Compiles natural-language workflows into GitHub Actions that run AI agents on events. | Optional |
 | [Headroom](https://github.com/headroomlabs-ai/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
+| [Context7](https://github.com/upstash/context7) | Fetches current, targeted library/API documentation on demand. | Documented |
 | [code2prompt](https://github.com/mufeedvh/code2prompt) | Packs a codebase into a single prompt with token counts and filtering (Repomix alternative). | Documented |
 | [LLMLingua](https://github.com/microsoft/LLMLingua) | Compresses prompts up to ~20× by dropping low-information tokens (advanced, for custom pipelines). | Documented |
+
+The layers are intentionally different:
+
+```text
+don't generate it  → Caveman / Ponytail
+don't retrieve it  → Serena / Codebase-Memory-MCP / QMD / grepai
+don't rediscover it → OpenWiki / OpenSpec / Claude-Mem / ACE playbook
+compress when needed → RTK / Headroom / LLMLingua
+measure the result  → aito verify / ccusage
+```
 
 ## Privacy & safety
 
@@ -77,7 +97,11 @@ This is deliberately boring, which is the point:
 - **No `aito` telemetry.** Third-party policies still apply. OpenSpec and OpenWiki have
   telemetry enabled upstream; `aito` disables it when it invokes either tool. For manual
   use, set `OPENSPEC_TELEMETRY=0` or `OPENWIKI_TELEMETRY_DISABLED=1` (or
-  `DO_NOT_TRACK=1`).
+  `DO_NOT_TRACK=1`). Serena's startup metrics use
+  `SERENA_USAGE_REPORTING=false`.
+- **Memory/retrieval stays opt-in.** Claude-Mem persists session observations;
+  Codebase-Memory, QMD, and grepai create local indexes; cloud grepai embeddings and
+  Context7 queries cross the network. Review the [security model](docs/security.md).
 - **No proxy by default.** The only proxy-based tool (Headroom) is strictly opt-in, off by
   default, and flagged with a warning before install — nothing intercepts your AI traffic
   unless you explicitly choose it.
@@ -175,6 +199,8 @@ a labeled chars/4 estimate. See [Testing & Proving Token Reduction](docs/testing
 | `AITO_UI=plain` | Force the plain (read-based) selection UI |
 | `AITO_INSTRUCTION_BUDGET=1500` | Token budget for instruction files |
 | `AITO_OPENWIKI_VERSION` / `AITO_OPENSPEC_VERSION` / `AITO_CCUSAGE_VERSION` | Pin npm component versions |
+| `AITO_SERENA_VERSION` / `AITO_CLAUDE_MEM_VERSION` | Pin Serena or Claude-Mem |
+| `AITO_CODEBASE_MEMORY_VERSION` / `AITO_QMD_VERSION` / `AITO_GREPAI_VERSION` | Pin retrieval components (grepai pin applies to Go builds) |
 | `AITO_RTK_VERSION` | Pin the RTK release installed by its verified upstream installer |
 | `AITO_CODESIGHT_VERSION` / `AITO_GRAPHIFY_VERSION` / `AITO_REPOMIX_VERSION` | Pin repository-tool versions |
 | `AITO_HEADROOM_VERSION` | Pin the Headroom Python package version |

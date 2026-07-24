@@ -14,6 +14,12 @@ versions whose commands and compatibility were validated together.
 |---|---:|---:|---|---|
 | OpenWiki | `0.2.3` | 2026-07-23 | `openwiki` (npm) | Added as a default; requires Node 22+ |
 | OpenSpec | `1.6.0` | 2026-07-10 | `@fission-ai/openspec` (npm) | `init --tools` still valid; now requires Node 20.19+ |
+| Serena | `1.6.1` | 2026-07-21 | `serena-agent` (PyPI/uv) | Added as optional symbol retrieval; Python 3.11–3.14 |
+| Codebase-Memory-MCP | `0.9.0` | 2026-07-08 | npm/native binary | Added as optional structural retrieval; Node 18+ wrapper |
+| QMD | `2.5.3` | 2026-05-29 | `@tobilu/qmd` (npm) | Added as optional local doc retrieval; Node 22+ |
+| grepai | `0.35.0` | 2026-03-16 | Homebrew / pinned Go build | Added as optional semantic code retrieval |
+| Claude-Mem | `13.12.4` | 2026-07-24 | official `npx ... install` | Added as opt-in session memory; Node 20.12+ |
+| Context7 CLI | `0.5.5` | 2026-07-17 | `ctx7` (npm, documented only) | Complementary remote library-doc retrieval |
 | RTK | `0.43.0` | 2026-06-28 | Homebrew / verified upstream installer | Commands unchanged |
 | ccusage | `20.0.18` | 2026-07-20 | `ccusage` (npm) | Commands unchanged |
 | Caveman | `1.9.1` | 2026-07-03 | official installer | Node 18+; commands unchanged |
@@ -28,6 +34,14 @@ versions whose commands and compatibility were validated together.
 
 ### Required compatibility changes
 
+- **Retrieval layer:** added Serena, Codebase-Memory-MCP, QMD, and grepai as optional
+  retrieval-before-compression components. Serena/Codebase-Memory/grepai are alternatives;
+  QMD can coexist because it targets Markdown knowledge.
+- **Claude-Mem 13.12.4:** uses the official `npx claude-mem@<version> install` path
+  because a global npm install is only the SDK. Session capture, hooks, and its worker
+  remain off by default and behind an extra privacy confirmation.
+- **Context7 0.5.5:** documented as a complementary remote source for current library/API
+  documentation, not as an installed token-optimizer component.
 - **OpenWiki 0.2.3:** added the Node 22+ global CLI as a default component. Initial
   provider/model setup remains user-driven because `openwiki --init` is interactive.
   Setup separately asks whether to add the official scheduled documentation-update
@@ -55,9 +69,10 @@ versions whose commands and compatibility were validated together.
 ### Changed in `aito`
 
 - Added reusable Node semantic-version checks and explicit runtime errors for OpenWiki,
-  OpenSpec, Codesight, Graphify, and Repomix.
-- Added version overrides for Codesight, Graphify, Repomix, and Headroom; existing
-  OpenSpec and ccusage installs are now updated when those components are selected.
+  OpenSpec, Claude-Mem, Codebase-Memory-MCP, QMD, Codesight, Graphify, and Repomix.
+- Added version overrides for the new retrieval/session-memory components, Codesight,
+  Graphify, Repomix, and Headroom; existing OpenSpec and ccusage installs are now updated
+  when those components are selected.
 - Corrected stale ccusage, Graphify, and Headroom repository links.
 - Scoped the telemetry claim to `aito` itself and documented third-party network and
   telemetry behavior accurately.

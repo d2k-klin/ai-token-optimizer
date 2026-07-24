@@ -244,7 +244,8 @@ cmd_doctor() {
   local issues=0 f tok
 
   # Tools
-  for t in node npm git gh code openwiki rtk ccusage repomix openspec headroom; do
+  for t in node npm git gh code openwiki serena codebase-memory-mcp qmd grepai \
+           rtk ccusage repomix openspec headroom; do
     if have "$t"; then ok "tool present: $t"; else info "tool absent: $t"; fi
   done
 
