@@ -15,15 +15,13 @@ install_ccusage() {
   fi
   local ver="${AITO_CCUSAGE_VERSION:-latest}"
 
-  if have ccusage; then
-    ok "ccusage already on PATH"
+  info "installing/updating ccusage@$ver (global, npm)…"
+  if npm install -g "ccusage@$ver" >/dev/null 2>&1; then
+    ok "ccusage ready ($(ccusage --version 2>/dev/null || echo "$ver"))"
+  elif have ccusage; then
+    warn "ccusage update failed; continuing with the existing binary"
   else
-    info "installing ccusage@$ver (global, npm)…"
-    if npm install -g "ccusage@$ver" >/dev/null 2>&1; then
-      ok "installed ccusage@$ver"
-    else
-      warn "global install failed — you can still run it on demand: npx ccusage@$ver"
-    fi
+    warn "global install failed — you can still run it on demand: npx ccusage@$ver"
   fi
 
   info "Usage:  ccusage            # daily token + cost report"

@@ -20,7 +20,7 @@ apply_copilot_profile() {
   vscode_install_ext "github.copilot-chat"
 
   # Keep AI-generated map/export outputs out of VCS by default.
-  ensure_gitignore "token-report.md" "*.bak" "repomix-output.*" "graphify-out/" ".codesight/"
+  ensure_gitignore "token-report.md" "*.bak" "repomix-output.*" ".graphify/" "graphify-out/" ".codesight/"
 
   ok "Copilot track configured"
   info "OpenSpec slash commands (e.g. /opsx:propose) appear once OpenSpec is initialized."

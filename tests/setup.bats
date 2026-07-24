@@ -27,6 +27,7 @@ teardown() { teardown_aito_env; }
   [ -f .claude/settings.json ]
   [ -f .vscode/settings.json ]
   [ -f token-report.md ]
+  [ ! -e .github/workflows/openwiki-update.yml ]
 }
 
 @test "setup is idempotent (re-run, no dup gitignore lines)" {

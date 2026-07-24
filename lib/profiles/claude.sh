@@ -31,7 +31,7 @@ JSON
   vscode_merge_settings
   vscode_install_ext "anthropic.claude-code"
 
-  ensure_gitignore "token-report.md" "*.bak" "repomix-output.*" "graphify-out/" ".codesight/"
+  ensure_gitignore "token-report.md" "*.bak" "repomix-output.*" ".graphify/" "graphify-out/" ".codesight/"
 
   ok "Claude Code track configured"
   info "Open this folder in VS Code with the Claude Code extension, or run 'claude' in the terminal."

@@ -3,7 +3,8 @@
 `aito` is a small, dependency-light Bash toolkit (Bash 3.2+; runs on stock macOS
 bash and Linux). It installs and configures token-efficient AI coding workflows for
 two tracks — **GitHub Copilot** and **Claude Code** — and then *measures* that token
-reduction is actually in place.
+reduction is actually in place. The same flow works immediately after a new application
+is scaffolded or later in an established repository.
 
 ## How a run flows
 
@@ -13,7 +14,7 @@ bash install.sh ─► copy toolkit to ~/.local/share + launcher on PATH
         aito setup ─────┤  (run inside a target project)
                         ├─ detect env (OS, pkg mgr, node, gh, code, jq, tiktoken)
                         ├─ pick track(s):  Copilot / Claude Code / both
-                        ├─ pick tools:     OpenSpec, RTK, … (checkboxes)
+                        ├─ pick tools:     OpenWiki, OpenSpec, RTK, … (checkboxes)
                         ├─ run selected component installers   (idempotent, safe)
                         ├─ apply track profiles → instruction + VS Code files
                         ├─ init ACE playbook (docs/ai-playbook.md)
@@ -49,8 +50,9 @@ bin/aito  (dispatcher)
   prompt, not a blanket "yes" — risky opt-ins (e.g. RTK's auto Copilot hook) stay off.
 - **Best-available, graceful degradation.** Token counting, the selection UI, and JSON
   merging each detect the best tool present and fall back cleanly.
-- **No `curl | bash`.** Component installers use package managers / npm with version
-  override env vars, and tolerate failure (setup continues, warns, and reports).
+- **Explicit network boundaries.** Components use package managers and version overrides
+  where available. Full Caveman and RTK's non-Homebrew fallback use their disclosed
+  upstream installers; failures warn and setup continues.
 
 ## Two tracks, one shared layer
 
@@ -58,7 +60,7 @@ bin/aito  (dispatcher)
 |---|---|---|---|
 | **Copilot** | OpenSpec + prompt files | `.github/copilot-instructions.md` | Copilot ext + settings |
 | **Claude Code** | OpenSpec + `.claude/` | `CLAUDE.md` | Claude Code ext + settings |
-| **Shared (ACE)** | `docs/ai-playbook.md` | referenced by both | — |
+| **Shared** | OpenWiki + `docs/ai-playbook.md` (ACE) | referenced by both | — |
 
 ## Related docs
 

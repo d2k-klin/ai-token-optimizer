@@ -2,14 +2,12 @@
 # components/headroom.sh — OPTIONAL, ADVANCED. Off by default.
 # Headroom compresses tool outputs, files, RAG material, and conversation context
 # *before they reach the model* by running a LOCAL PROXY in front of your AI client.
-# See https://github.com/chopratejas/headroom
+# See https://github.com/headroomlabs-ai/headroom
 #
 # IMPORTANT NOTE (read before enabling):
 #   • It becomes an intermediary in your model traffic: it intercepts, transforms,
-#     caches, and authenticates requests (its Copilot path stores a Headroom-specific
-#     GitHub OAuth token).
-#   • Its documented integration targets **GitHub Copilot CLI**, NOT native VS Code
-#     Copilot — only enable it if you actually use a supported client.
+#     caches, and authenticates requests.
+#   • It wraps supported coding agents or exposes a local OpenAI-compatible proxy.
 #   • Compression can omit details the model later needs. Never rely on it for
 #     security, infrastructure, or error/stack-trace output.
 #   • It enlarges your security and debugging boundary. Treat it as a reviewed
@@ -18,7 +16,7 @@
 install_headroom() {
   step "Headroom (AI-traffic compression proxy — advanced)"
   warn "Headroom runs a LOCAL PROXY that intercepts, transforms, caches, and authenticates"
-  warn "your AI traffic. Documented for Copilot CLI (not native VS Code Copilot)."
+  warn "supported coding-agent/model traffic."
   warn "Compressed context can drop detail — do not use it for security/infra/error output."
 
   if ! confirm "I understand the above — install Headroom now?" n; then
@@ -26,21 +24,32 @@ install_headroom() {
     return 0
   fi
 
+  local ver="${AITO_HEADROOM_VERSION:-}"
+  local pkg="headroom-ai[proxy]"
+  [ -z "$ver" ] || pkg="$pkg==$ver"
+
   if have headroom; then
     ok "headroom already on PATH ($(headroom --version 2>/dev/null || echo '?'))"
   elif have pipx; then
-    info "installing headroom-ai via pipx…"
-    pipx install headroom-ai >/dev/null 2>&1 \
+    local python_args=()
+    if have python3.13; then
+      python_args=(--python python3.13)
+    else
+      warn "Python 3.13 is recommended for full pricing support; using pipx's default Python."
+    fi
+    info "installing $pkg via pipx…"
+    pipx install "${python_args[@]}" "$pkg" >/dev/null 2>&1 \
       && ok "installed headroom via pipx" \
-      || warn "pipx install failed — see https://github.com/chopratejas/headroom for setup"
+      || warn "pipx install failed — see https://github.com/headroomlabs-ai/headroom for setup"
   elif have pip3; then
     warn "prefer pipx; attempting pip3 --user install"
-    pip3 install --user headroom-ai >/dev/null 2>&1 \
+    pip3 install --user "$pkg" >/dev/null 2>&1 \
       && ok "installed headroom via pip3" \
-      || warn "pip3 install failed — see https://github.com/chopratejas/headroom for setup"
+      || warn "pip3 install failed — see https://github.com/headroomlabs-ai/headroom for setup"
   else
-    warn "no pipx/pip3 found — install from https://github.com/chopratejas/headroom"
+    warn "no pipx/pip3 found — install from https://github.com/headroomlabs-ai/headroom"
   fi
 
+  info "Verify with 'headroom doctor'; use 'headroom wrap <agent>' or 'headroom proxy'."
   warn "Security-review it before routing real traffic, pin the version, and bind it to localhost."
 }

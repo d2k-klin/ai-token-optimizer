@@ -1,8 +1,9 @@
 # Getting Started
 
 `aito` is a small CLI that configures **token-efficient AI coding workflows** for
-GitHub Copilot and Claude Code, then measures that the reduction is real. This guide
-takes you from zero to a configured project.
+GitHub Copilot and Claude Code, then measures that the reduction is real. It can
+jump-start the AI-development layer of a new project or safely configure an existing
+repository. This guide takes you from zero to a configured project.
 
 > New here? Read the one-paragraph idea in the [project README](../README.md), then
 > come back. For *what each tool does* see [tools.md](tools.md); for *how reduction is
@@ -17,7 +18,8 @@ takes you from zero to a configured project.
 
 | Recommended | Enables |
 |---|---|
-| **Node.js + npm** | Installing OpenSpec, RTK, Repomix, Codesight, Graphify. |
+| **Node.js 22+ + npm** | OpenWiki, OpenSpec, Repomix, Codesight, Graphify, ccusage, and full Caveman. Node 22 satisfies every current Node-based component. |
+| **Homebrew or `curl`** | Installing the RTK Rust binary (RTK is not the npm package named `rtk`). |
 | **jq** | Deep-merging VS Code `settings.json` instead of printing keys to add. |
 | **python3 + `tiktoken`** | Exact token counts (otherwise a labeled chars/4 estimate). |
 | **VS Code `code` CLI** | Auto-installing the Copilot / Claude Code extensions. |
@@ -25,6 +27,10 @@ takes you from zero to a configured project.
 
 Nothing in the recommended list is mandatory — `aito` degrades gracefully and tells you
 what it skipped.
+
+The individual minimums are OpenWiki and Repomix Node 22+, OpenSpec 20.19+, Graphify
+20+, and Codesight 18+. Python 3.13 is recommended if you opt into Headroom; Python
+3.10+ is its hard minimum.
 
 ## 2. Install the CLI
 
@@ -53,20 +59,47 @@ aito env        # shows detected OS, package manager, and tools
 
 ## 3. Configure a project
 
-From the **root of the project** you want to optimize:
+`aito` works at project creation and later in a repository's life. It does not choose a
+language, framework, or application structure; use your normal project generator for
+that, then run `aito` from the generated repository root.
+
+### Jump-start a fresh project
 
 ```bash
+# First create/scaffold the application with your usual tool, then:
+cd my-new-project
+git init       # skip if already initialized
 aito setup
 ```
+
+Running setup before the first AI-assisted task establishes concise instructions, a
+durable playbook, tool defaults, and a measurable baseline from the beginning. Run
+`openwiki --init` later, once there is enough source code to document.
+
+### Configure an existing project
+
+From the repository root:
+
+```bash
+cd existing-project
+aito setup
+```
+
+Existing files are backed up or merged, so the same command is suitable for mature
+projects. Review the resulting diff before committing, as you would for any tooling
+change.
 
 You'll be asked two things:
 
 1. **Track(s)** — GitHub Copilot, Claude Code, or both.
-2. **Tools** — Caveman, Ponytail, OpenSpec, RTK, ccusage, Codesight, Graphify, Repomix,
-   gh-aw, Headroom. Only **Caveman** and **Ponytail** are pre-checked by default;
-   everything else (OpenSpec, RTK, ccusage, repo-mappers, automation, the Headroom
-   proxy) is off unless you explicitly select it (Headroom also asks for explicit
-   confirmation on top of that).
+2. **Tools** — Caveman, Ponytail, OpenWiki, OpenSpec, RTK, ccusage, Codesight, Graphify,
+   Repomix, gh-aw, Headroom. **Caveman**, **Ponytail**, and **OpenWiki** are pre-checked
+   by default; everything else (OpenSpec, RTK, ccusage, repo-mappers, automation, the
+   Headroom proxy) is off unless you explicitly select it.
+
+After OpenWiki installs, setup separately asks whether to add its scheduled
+documentation-update GitHub Action. That prompt defaults to **no**; Headroom and the full
+Caveman package also retain their separate confirmation gates.
 
 In the plain UI: type a number to toggle it, `a` for all, `n` for none, then **Enter**
 to confirm.
@@ -81,7 +114,8 @@ AITO_ASSUME_YES=1 aito setup
 ```
 
 This accepts the **recommended defaults** for every prompt — notably, risky opt-ins such
-as RTK's automatic Copilot hook stay **off**. Use `AITO_UI=plain` to force the text UI.
+as RTK's automatic Copilot hook and OpenWiki's GitHub Action stay **off**. Use
+`AITO_UI=plain` to force the text UI.
 
 ## 4. What gets written
 
@@ -93,6 +127,10 @@ as RTK's automatic Copilot hook stay **off**. Use `AITO_UI=plain` to force the t
 
 Existing files are never clobbered: a differing file is backed up to `*.bak` first, and
 VS Code settings are deep-merged. Re-running `aito setup` is safe and idempotent.
+
+The default OpenWiki install writes no project documentation until you run
+`OPENWIKI_TELEMETRY_DISABLED=1 openwiki --init`. If you explicitly approve its
+automation prompt, setup writes `.github/workflows/openwiki-update.yml`.
 
 Review the generated files, then commit them.
 

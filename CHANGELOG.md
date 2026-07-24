@@ -3,117 +3,63 @@
 All notable changes to `aito` and the upstream tools it installs.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
-`aito` always installs the **latest** released version of each tool (via `npm`/`npx`,
-the tool's official installer, or a `gh` extension), so the versions below are the
-latest validated at the time of writing — pin any of them with the matching
-`AITO_*_VERSION` override where supported.
+Unpinned package installs default to the current release; the table below records the
+versions whose commands and compatibility were validated together.
 
-## [Unreleased] — 2026-06-30
+## [Unreleased] — 2026-07-24
 
 ### Tool versions refreshed
 
-Verified the latest released version of every bundled tool and confirmed each install
-path still works. No `aito` install/setup commands needed to change. Two notes added in
-code: ccusage's GitHub org move, and OpenSpec's opt-in Stores beta.
+| Tool | Latest | Released | Install path | Compatibility result |
+|---|---:|---:|---|---|
+| OpenWiki | `0.2.3` | 2026-07-23 | `openwiki` (npm) | Added as a default; requires Node 22+ |
+| OpenSpec | `1.6.0` | 2026-07-10 | `@fission-ai/openspec` (npm) | `init --tools` still valid; now requires Node 20.19+ |
+| RTK | `0.43.0` | 2026-06-28 | Homebrew / verified upstream installer | Commands unchanged |
+| ccusage | `20.0.18` | 2026-07-20 | `ccusage` (npm) | Commands unchanged |
+| Caveman | `1.9.1` | 2026-07-03 | official installer | Node 18+; commands unchanged |
+| Ponytail | `4.8.4` | 2026-06-29 | plugin marketplace | Claude/Copilot commands unchanged |
+| Codesight | `1.18.0` | 2026-06-28 | `codesight` (npx) | `--wiki` unchanged; Node 18+ |
+| Graphify | `0.17.1` | 2026-06-23 | `@sentropic/graphify` (npm) | **Install/use flow changed; adjusted below** |
+| Repomix | `1.17.0` | 2026-07-21 | `repomix` (npx) | Commands unchanged; now requires Node 22+ |
+| gh-aw | `0.83.1` | 2026-07-23 | `github/gh-aw` (gh extension) | Install command unchanged |
+| Headroom | `0.32.1` | 2026-07-19 | `headroom-ai[proxy]` (PyPI) | **Package extras/integrations changed; adjusted below** |
+| code2prompt | `4.2.0` | 2025-12-11 | Homebrew / Cargo (documented only) | Removed incorrect npm command |
+| LLMLingua | `0.2.2` | 2024-04-09 | `llmlingua` (pip, documented only) | No change |
 
-| Tool | Latest | Released | Install path | Action needed |
-|---|---|---|---|---|
-| OpenSpec | `1.5.0` | 2026-06-28 | `@fission-ai/openspec` (npm) | None — `init --tools` unchanged |
-| RTK | `0.43.0` | 2026-06-28 | brew / `install.sh` (Rust binary) | None |
-| ccusage | `20.0.14` | 2026-06-15 | `ccusage` (npm) | None — repo URL updated |
-| Caveman | `1.9.0` | 2026-06-12 | official `install.sh` | None |
-| Ponytail | `4.8.4` | 2026-06-29 | plugin marketplace (`DietrichGebert/ponytail`) | **New** — added as optional component |
-| Codesight | `1.18.0` | 2026-06-28 | `codesight` (npx) | None |
-| Graphify | `0.17.1` | 2026-06-23 | `@sentropic/graphify` (npx) | None |
-| Repomix | `1.16.0` | 2026-06-29 | `repomix` (npx) | None |
-| gh-aw | `0.81.6` | 2026-06-27 | `github/gh-aw` (gh ext) | None |
-| Headroom | `0.28.0` | 2026-06-29 | `headroom-ai` (pip/pipx) | None — opt-in, off by default |
-| code2prompt | `4.2.0` | 2025-12-11 | cargo / npm (documented only) | None |
-| LLMLingua | `0.2.2` | 2024-04-09 | `llmlingua` (pip, documented only) | None |
+### Required compatibility changes
 
-### Per-tool notes
+- **OpenWiki 0.2.3:** added the Node 22+ global CLI as a default component. Initial
+  provider/model setup remains user-driven because `openwiki --init` is interactive.
+  Setup separately asks whether to add the official scheduled documentation-update
+  pattern; the bundled workflow defaults telemetry off and pins its CLI/actions.
+- **Graphify 0.17.1:** replaced the obsolete bare
+  `npx @sentropic/graphify` invocation with the supported global npm install plus
+  `graphify install --platform ...`. `aito` now installs the Claude Code and/or VS Code
+  Copilot skill selected by the active tracks. Current output lives under `.graphify/`,
+  which is ignored along with the legacy `graphify-out/` directory. Graph creation is
+  now invoked from the agent with `/graphify .`.
+- **Headroom 0.32.1:** updated the repository to `headroomlabs-ai/headroom`, installed
+  the required `headroom-ai[proxy]` extra, preferred Python 3.13 when available, and
+  removed the obsolete Copilot-only description. Python 3.10+ remains the hard minimum.
+- **OpenSpec 1.6.0:** added the Node 20.19 runtime guard and disabled its anonymous
+  command/version telemetry during `aito` initialization. Users should export
+  `OPENSPEC_TELEMETRY=0` or `DO_NOT_TRACK=1` for later OpenSpec commands.
+- **Repomix 1.17.0:** added the Node 22 runtime guard.
+- **RTK:** removed documentation that installed the unrelated npm package named `rtk`.
+  The supported Homebrew/official-binary path remains unchanged, and
+  `AITO_RTK_VERSION` now maps to the upstream installer's version pin.
+- **code2prompt:** replaced the unrelated `npx code2prompt` package with the official
+  Rust CLI installation commands (`brew install code2prompt` or
+  `cargo install code2prompt`).
 
-**OpenSpec 1.5.0** — Persistent spec/requirements/tasks layer (default tool).
-- New: **Stores** (very early beta) — a simpler spec/change layout meant to replace the
-  workspace/initiative model. **Opt-in**; upstream warns of breaking changes while it
-  stabilizes. `aito`'s default `openspec init --tools "github-copilot,claude"` flow is
-  unaffected (flag and tool IDs verified present in 1.5.0).
-- Fixed: config values wrapped in JSON containers now parse correctly; carriage returns
-  in generated command descriptions are escaped instead of corrupting CRLF values.
-- ⚠️ Action: none. Stay on the default flow; avoid Stores until it's stable.
+### Changed in `aito`
 
-**RTK 0.43.0** — Compresses noisy terminal output before it enters context (default tool).
-- New: OpenShift CLI (`oc`) support with shared k8s filtering; Pulumi filters for
-  preview/up/destroy/refresh/stack.
-- Fixed: "never-worse output" guard (compressed output can no longer be larger than raw);
-  diff now reports modified-only diffs and follows the diff exit-code convention; dotnet
-  test de-duplication; git status exit-code propagation in the compact path.
-- ⚠️ Action: none. brew/`install.sh` path unchanged.
-
-**ccusage 20.0.14** — Local token-usage & cost monitor (default tool).
-- Changed: the project **moved GitHub orgs** from `ryoppippi/ccusage` to `ccusage/ccusage`
-  (npm package name `ccusage` is unchanged). Code comment/URL updated accordingly.
-- Performance: unified JSONL prefilter/byte-lines across agents; parallelized file/DB
-  reads across all agent loaders.
-- ⚠️ Action: none. `npm i -g ccusage` is unchanged; the old repo URL still redirects.
-
-**Caveman 1.9.0** — Concise-output instructions (optional; lite version always applied).
-- Installed only on explicit opt-in via the official `install.sh`. No interface change.
-- ⚠️ Action: none.
-
-**Ponytail 4.8.4** — Minimal-code ruleset plugin (optional, **new in this release**).
-- Makes the agent write the least code that works (necessity → reuse → stdlib →
-  platform → deps → custom). Installs as a host plugin into Claude Code and Copilot CLI
-  via their plugin marketplaces; no npm global, so no `AITO_*_VERSION` pin — the
-  marketplace serves the latest release.
-- Intensity via `/ponytail lite|full|ultra|off` (default `full`; `PONYTAIL_DEFAULT_MODE`
-  or `~/.config/ponytail/config.json` overrides). Extra commands: `/ponytail-review`,
-  `/ponytail-audit`, `/ponytail-debt`, `/ponytail-help`.
-- ⚠️ Action: none — off by default in `aito setup`. Review its lifecycle hooks after
-  install; uninstall with `node scripts/uninstall.js` before removing the plugin.
-
-**Codesight 1.18.0** — AST-based repo map / static wiki (optional).
-- Run on demand via `npx codesight --wiki`. No interface change.
-- ⚠️ Action: none.
-
-**Graphify 0.17.1** — Code + docs knowledge graph (optional; pick one mapper).
-- Run on demand via `npx @sentropic/graphify`. No interface change.
-- ⚠️ Action: none.
-
-**Repomix 1.16.0** — One-off repo-to-single-file export with token counts (optional).
-- Run on demand via `npx repomix`. No interface change.
-- ⚠️ Action: none.
-
-**gh-aw 0.81.6** — Compiles natural-language workflows into GitHub Actions (optional).
-- Installed via `gh extension install github/gh-aw`. Still pre-1.0 and fast-moving; keep
-  workflows read-only with narrow triggers until piloted.
-- ⚠️ Action: none, but re-pilot after upgrades since the schema can shift before 1.0.
-
-**Headroom 0.28.0** — Local AI-traffic compression proxy (opt-in, off by default).
-- Installed via `pipx install headroom-ai`. Remains advanced/opt-in: it intercepts and
-  caches model traffic, so security-review and pin before routing real traffic.
-- ⚠️ Action: none. Stays disabled unless explicitly enabled.
-
-**code2prompt 4.2.0** — Codebase-to-prompt packer (documented alternative to Repomix).
-- Documentation reference only; not auto-installed. Installs via `cargo install code2prompt`
-  (Rust binary) or npm. (The PyPI `code2prompt` 0.8.x is a separate Python SDK.)
-- ⚠️ Action: none.
-
-**LLMLingua 0.2.2** — Prompt compression for custom pipelines (documented, advanced).
-- Documentation reference only; not auto-installed. Unchanged upstream since 2024-04.
-- ⚠️ Action: none.
-
-### Added (this repo)
-
-- `lib/components/ponytail.sh`: new optional component installing the Ponytail
-  minimal-code ruleset plugin (<https://ponytail.dev>) into Claude Code and/or GitHub
-  Copilot CLI, with manual slash-command fallback when the host CLI isn't on PATH.
-  Wired into the `aito setup` catalog (off by default) and documented in
-  `docs/tools.md`, `docs/security.md`, and the README tools table.
-
-### Changed (this repo)
-
-- `lib/components/ccusage.sh`: updated the source URL to `github.com/ccusage/ccusage`
-  (project moved orgs as of v20).
-- `lib/components/openspec.sh`: added an inline note that v1.5.0's Stores layout is an
-  opt-in beta and the default init flow is unaffected.
+- Added reusable Node semantic-version checks and explicit runtime errors for OpenWiki,
+  OpenSpec, Codesight, Graphify, and Repomix.
+- Added version overrides for Codesight, Graphify, Repomix, and Headroom; existing
+  OpenSpec and ccusage installs are now updated when those components are selected.
+- Corrected stale ccusage, Graphify, and Headroom repository links.
+- Scoped the telemetry claim to `aito` itself and documented third-party network and
+  telemetry behavior accurately.
+- Documented `aito` as both a new-project AI-workflow jump start and a safe addition to
+  established repositories, without presenting it as an application scaffolder.

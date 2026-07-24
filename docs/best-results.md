@@ -16,25 +16,32 @@ Works for both Copilot and Claude Code, on almost any project:
 
 | Layer | Tool | Source of waste it removes |
 |---|---|---|
+| Repository knowledge | **OpenWiki** | repeated architecture rediscovery |
 | Requirements | **OpenSpec** | building the wrong thing → retries |
 | Response style | **Concise instructions** (auto) | verbose output, tool narration |
 | Terminal output | **RTK** (explicit mode) | huge diff/test/build logs |
 | Evolving context | **ACE playbook** (auto) | re-deriving lessons each session |
 | Measurement | **ccusage** + `aito verify` | flying blind on actual usage |
 
-`aito setup` only pre-checks Caveman and Ponytail by default; OpenSpec, RTK, and ccusage
-are one checkbox tick away, but you must select them explicitly to get this baseline.
-Everything beyond this baseline should be added **only on evidence of a specific
-problem.**
+`aito setup` pre-checks Caveman, Ponytail, and OpenWiki by default; OpenSpec, RTK, and
+ccusage are one checkbox tick away, but you must select them explicitly to get this
+baseline. OpenWiki's scheduled GitHub Action remains a separate opt-in. Everything beyond
+this baseline should be added **only on evidence of a specific problem.**
 
-## Why these five combine well
+For a new project, apply the baseline immediately after the application scaffold so its
+instructions and playbook exist before the first AI-assisted change. For an established
+repository, start with the defaults and add optional tools gradually as actual waste
+becomes visible.
+
+## Why these layers combine well
 
 They're complementary, not redundant — each owns a different waste source (unclear
-requirements, verbose responses, noisy tool output, context decay, no visibility). The
-biggest lever is **OpenSpec**: avoiding one wrong implementation saves more than
-compressing dozens of responses. RTK compresses the *inputs* (often larger than the
-model's replies). The ACE playbook keeps the cheap, persistent context improving instead
-of being rebuilt. ccusage proves the trend is going the right way.
+requirements, architecture rediscovery, verbose responses, noisy tool output, context
+decay, no visibility). The biggest lever is **OpenSpec**: avoiding one wrong
+implementation saves more than compressing dozens of responses. OpenWiki keeps
+repository knowledge reusable; RTK compresses the *inputs* (often larger than the
+model's replies). The ACE playbook keeps cheap persistent context improving instead of
+being rebuilt. ccusage proves the trend is going the right way.
 
 ## Track recipes
 

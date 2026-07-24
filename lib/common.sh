@@ -49,6 +49,13 @@ confirm() {
 have()        { command -v "$1" >/dev/null 2>&1; }
 require_cmd()  { have "$1" || die "Required command not found: $1"; }
 
+# node_at_least <semver> — compare the running Node.js version with a minimum.
+# Uses Node itself so prerelease/version parsing stays out of portable shell code.
+node_at_least() {
+  have node || return 1
+  node -e 'const h=process.versions.node.split(".").map(Number),n=process.argv[1].split(".").map(Number);for(let i=0;i<3;i++){if((h[i]||0)>(n[i]||0))process.exit(0);if((h[i]||0)<(n[i]||0))process.exit(1)}' "$1" >/dev/null 2>&1
+}
+
 # ---------------------------------------------------------------------------
 # Idempotent file operations
 # ---------------------------------------------------------------------------

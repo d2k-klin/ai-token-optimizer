@@ -69,7 +69,8 @@ RTK only helps when there is noisy output to compress. To see a concrete reducti
 
 ```bash
 # 1) make sure RTK is installed (via `aito setup`, or)
-npm install -g rtk
+brew install rtk               # macOS/Linux with Homebrew
+# otherwise use a verified binary or installer from https://github.com/rtk-ai/rtk
 
 # 2) generate some noise, then measure
 git diff > /dev/null           # or run your test/build so there is output

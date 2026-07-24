@@ -7,14 +7,18 @@
 
 install_rtk() {
   step "RTK"
+  local ver="${AITO_RTK_VERSION:-}"
+  local current=""
+  have rtk && current="$(rtk --version 2>/dev/null | awk '{print $NF}')"
 
-  if have rtk && rtk gain >/dev/null 2>&1; then
+  if have rtk && rtk gain >/dev/null 2>&1 \
+     && { [ -z "$ver" ] || [ "$current" = "${ver#v}" ]; }; then
     ok "rtk already on PATH ($(rtk --version 2>/dev/null || echo '?'))"
   else
     # The npm "rtk" package is NOT the correct one (that's a release toolkit).
     # The real RTK (rtk-ai/rtk) is a Rust binary installed via brew or curl.
     local installed=0
-    if [ "$AITO_PKG" = "brew" ]; then
+    if [ "$AITO_PKG" = "brew" ] && [ -z "$ver" ]; then
       info "installing rtk via Homebrew…"
       if brew install rtk >/dev/null 2>&1 && have rtk; then
         ok "installed rtk ($(rtk --version 2>/dev/null || echo '?'))"
@@ -25,7 +29,8 @@ install_rtk() {
     fi
     if [ "$installed" = 0 ]; then
       info "installing rtk via install script…"
-      if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh >/dev/null 2>&1 && have rtk; then
+      if curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh \
+         | RTK_VERSION="$ver" sh >/dev/null 2>&1 && have rtk; then
         ok "installed rtk ($(rtk --version 2>/dev/null || echo '?'))"
       else
         warn "rtk install failed — see https://github.com/rtk-ai/rtk for install steps"; return 1

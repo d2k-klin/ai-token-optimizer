@@ -2,8 +2,8 @@
 
 `aito` is a **summarized setup of available tools for token optimization during
 development**. It doesn't reinvent them; it installs, configures, and wires together
-existing projects, with safe defaults. This page explains each tool: what it does, why
-it saves tokens, whether it's on by default, and what to watch out for.
+new or existing projects, with safe defaults. This page explains each tool: what it
+does, why it saves tokens, whether it's on by default, and what to watch out for.
 
 Legend: **Default ON** = pre-checked in `aito setup`; **Optional** = off until you pick it.
 
@@ -49,6 +49,27 @@ instruction-only adapters instead.
   other diff. Uninstall with `node scripts/uninstall.js` *before* removing the plugin
   from the host.
 
+### OpenWiki — maintained codebase documentation · **Default ON**
+[OpenWiki](https://github.com/langchain-ai/openwiki) generates a local wiki for coding
+agents and updates it incrementally as the repository changes.
+
+- **Why it saves tokens:** agents can load focused, maintained documentation instead of
+  repeatedly rediscovering architecture and relationships from source files.
+- **Setup/use:** `aito setup` globally installs `openwiki` (Node.js 22+). Initial
+  provider/model/API-key setup is intentionally left to
+  `OPENWIKI_TELEMETRY_DISABLED=1 openwiki --init` because upstream initialization is
+  interactive. Code documentation lives under `openwiki/`; OpenWiki also maintains its
+  own marker-delimited sections in root `AGENTS.md` and `CLAUDE.md`.
+- **Optional automation:** after installation, `aito` asks whether to add
+  `.github/workflows/openwiki-update.yml`. The default is **no**, including in
+  non-interactive mode. If accepted, the workflow runs daily and opens a documentation
+  PR; review its model/schedule and add `OPENROUTER_API_KEY`, or replace the provider
+  configuration, before enabling it.
+- **Privacy/security:** generation sends repository context to the inference provider
+  you configure. Keep secrets out of the input, review generated docs before commit,
+  and set `OPENWIKI_TELEMETRY_DISABLED=1` or `DO_NOT_TRACK=1` for manual runs. The
+  bundled workflow disables OpenWiki telemetry and pins the audited CLI and actions.
+
 ---
 
 ## Core (optional)
@@ -67,6 +88,9 @@ archived history. For IDE assistants it exposes slash commands (`/opsx:propose`,
   multi-session changes. Skip for typos and obvious one-liners.
 - **Security:** pin the npm version (`AITO_OPENSPEC_VERSION`); review generated prompt
   files; keep secrets and customer data out of specs. `openspec/` is source material.
+- **Runtime/privacy:** current releases require Node.js 20.19+. OpenSpec collects
+  anonymous command names and its version unless `OPENSPEC_TELEMETRY=0` or
+  `DO_NOT_TRACK=1`; `aito` disables telemetry for the initialization command.
 - **Config:** `openspec/config.yaml` (concise project context + authoring rules).
 
 ### RTK — compress noisy terminal output · **Optional (explicit mode)**
@@ -130,17 +154,20 @@ API-oriented projects.
 
 - **Add it only if** the assistant repeatedly re-reads many files, misunderstands routes
   or models, or misses the blast radius of changes. Start with the static wiki
-  (`npx codesight --wiki`), not an MCP server.
+  (`npx codesight@latest --wiki`), not an MCP server. Requires Node.js 18+.
 - **Security:** scans and persists concentrated architecture context — review before
   committing; generated instructions can conflict with existing ones.
 
 ### Graphify — knowledge-graph repo map · **Optional**
 Maps code *plus* docs, PDFs, images, and diagrams into a persistent knowledge graph
-(`graph.html`, `GRAPH_REPORT.md`, `graph.json`) and answers relationship/architecture
-questions without re-grepping.
+under `.graphify/` (`graph.json`, `GRAPH_REPORT.md`, a static studio, and optional wiki)
+and answers relationship/architecture questions without re-grepping.
 
 - **Choose Graphify instead of Codesight** for heterogeneous repos (code + documents +
   infra + diagrams) or graph-style relationship questions. **Pick one mapper, not both.**
+- **Setup/use:** current releases require Node.js 20+ and a global
+  `@sentropic/graphify` install. `aito` installs the matching Claude Code / VS Code
+  Copilot skill; build on demand with `/graphify .`.
 - **Security:** the graph reveals high-value relationships; keep output local/private and
   review it; avoid network server modes unless required.
 
@@ -153,6 +180,7 @@ Packages repository contents into an AI-friendly file and reports token counts.
 
 - **Use for:** a controlled external review, a one-time architecture snapshot, exporting
   a selected directory, or measuring approximate token size.
+- **Runtime:** current releases require Node.js 22+.
 - **Do *not*** attach a full Repomix pack to every feature — it defeats targeted context.
   Always inspect output for secrets before sharing.
 
@@ -177,8 +205,10 @@ evidence-loss risk the project avoids elsewhere. Reach for them deliberately.
 A fast packer (Rust/CLI) that turns a codebase into a single prompt with token counts and
 flexible include/exclude filtering. It overlaps with **Repomix** (already selectable),
 which also offers tree-sitter `--compress` and per-file token counts. Use whichever you
-prefer for one-off exports — **don't run both** as permanent context. `npx code2prompt`
-or see <https://github.com/mufeedvh/code2prompt>.
+prefer for one-off exports — **don't run both** as permanent context. Install the Rust
+CLI with `brew install code2prompt` or `cargo install code2prompt`; the npm package named
+`code2prompt` is a different JavaScript library. See
+<https://github.com/mufeedvh/code2prompt>.
 
 ### LLMLingua / LLMLingua-2 — perplexity-based prompt compression · *advanced*
 Microsoft Research libraries that compress a prompt up to ~20× by scoring tokens with a
@@ -199,17 +229,17 @@ the model* by running a **local proxy** in front of your AI client. Selectable i
 
 > **Note — read before enabling.** Headroom is the only tool here that becomes an
 > **intermediary in your model traffic**: it intercepts, transforms, caches, and
-> **authenticates** requests (its Copilot path stores a Headroom-specific GitHub OAuth
-> token). Its documented integration targets **GitHub Copilot CLI, not native VS Code
-> Copilot** — only enable it on a supported client. Compression can **silently drop
-> detail** the model needs, so never route security, infrastructure, or error/stack-trace
-> output through it. It enlarges your security and debugging boundary: security-review it,
-> pin the version, and keep it bound to localhost.
+> **authenticates** requests. It can wrap supported coding agents or expose a local
+> OpenAI-compatible proxy. Compression can **silently drop detail** the model needs, so
+> never route security, infrastructure, or error/stack-trace output through it. It
+> enlarges your security and debugging boundary: security-review it, pin the version,
+> and keep it bound to localhost.
 
-- **When to consider it:** you're on Copilot CLI (or a custom OpenAI-compatible client),
-  you've reviewed the proxy, and you've measured that it reduces context without hurting
-  quality. Otherwise the rest of this toolkit gets most of the benefit **without** a proxy.
-- `pipx install headroom` · <https://github.com/chopratejas/headroom>
+- **When to consider it:** you use a supported wrapped agent or custom OpenAI-compatible
+  client, you've reviewed the proxy, and you've measured that it reduces context without
+  hurting quality. Otherwise the rest of this toolkit gets most of the benefit without it.
+- `pipx install --python python3.13 "headroom-ai[proxy]"` ·
+  <https://github.com/headroomlabs-ai/headroom>
 
 ### Provider-native levers (no install — just use them)
 Often the highest-ROI moves need no tool at all: **prompt caching** (stable prefix, one
@@ -219,8 +249,9 @@ baked into the Claude track's `CLAUDE.md` guidance.
 
 ## Default-off by design
 
-Only **Caveman-lite** and **Ponytail** are pre-checked in `aito setup`; every other tool
-on this page is off until you explicitly select it.
+**Caveman**, **Ponytail**, and **OpenWiki** are pre-checked in `aito setup`; every other
+tool on this page is off until you explicitly select it. OpenWiki's separate automation
+workflow remains off until you confirm it.
 
 - **Headroom** ships as an explicit opt-in (above), **not** part of the default workflow:
   the rest of the toolkit reduces tokens without putting a proxy in your AI traffic.
