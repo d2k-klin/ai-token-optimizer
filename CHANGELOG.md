@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Unpinned package installs default to the current release; the table below records the
 versions whose commands and compatibility were validated together.
 
-## [Unreleased] — 2026-07-24
+## [Unreleased]
+
+## [1.0.0] — 2026-07-24
 
 ### Tool versions refreshed
 
