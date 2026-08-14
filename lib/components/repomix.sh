@@ -7,7 +7,7 @@
 install_repomix() {
   step "Repomix (optional one-off export)"
   if ! have npx; then warn "npx (Node.js) not found — skipping Repomix."; return 1; fi
-  if ! node_at_least 22; then warn "Repomix requires Node.js >=22."; return 1; fi
+  if ! node_at_least 22.0.1; then warn "Repomix requires Node.js >22.0.0."; return 1; fi
   local ver="${AITO_REPOMIX_VERSION:-latest}"
   ok "Repomix is available on demand via: npx repomix@$ver"
   warn "Always inspect output for secrets before sharing. Do not attach full packs to every prompt."

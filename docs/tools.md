@@ -334,7 +334,7 @@ the model* by running a **local proxy** in front of your AI client. Selectable i
   client, you've reviewed the proxy, and you've measured that it reduces context without
   hurting quality. Otherwise the rest of this toolkit gets most of the benefit without it.
 - `pipx install --python python3.13 "headroom-ai[proxy]"` ·
-  <https://github.com/headroomlabs-ai/headroom>
+  <https://github.com/chopratejas/headroom>
 
 ### Provider-native levers (no install — just use them)
 Often the highest-ROI moves need no tool at all: **prompt caching** (stable prefix, one

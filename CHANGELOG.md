@@ -8,6 +8,45 @@ versions whose commands and compatibility were validated together.
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-08-14
+
+### Tool versions refreshed
+
+| Tool | Latest | Released | Install path | Compatibility result |
+|---|---:|---:|---|---|
+| OpenWiki | `0.3.3` | 2026-08-14 | `openwiki` (npm) | `code --update --print` remains valid; Node 22+ |
+| OpenSpec | `1.9.0` | 2026-08-13 | `@fission-ai/openspec` (npm) | `init --tools` remains valid; Node 20.19+ |
+| Serena | `1.7.0` | 2026-08-09 | `serena-agent` (PyPI/uv) | Initialization changed to `serena init`; Python 3.11–3.14 |
+| Codebase-Memory-MCP | `0.10.4` | 2026-08-14 | npm/native binary | Package-manager installs are preserved; Node 18+ wrapper |
+| QMD | `2.5.3` | 2026-05-29 | `@tobilu/qmd` (npm) | Commands unchanged; Node 22+ |
+| grepai | `0.35.0` | 2026-03-16 | Homebrew / pinned Go build | Commands unchanged |
+| Claude-Mem | `13.15.0` | 2026-08-10 | official `npx ... install` | Official installer remains valid; Node 20.12+ and Bun 1+ |
+| Context7 CLI | `0.5.8` | 2026-08-11 | `ctx7` (npm, documented only) | Commands unchanged |
+| RTK | `0.45.0` | 2026-08-07 | Homebrew / verified upstream installer | Installer contract unchanged |
+| ccusage | `20.0.19` | 2026-07-27 | `ccusage` (npm) | Commands unchanged |
+| Caveman | `2.0.0` | 2026-08-11 | official installer | Skill install is unchanged; Node 18+ |
+| Ponytail | `4.9.0` | 2026-08-07 | plugin marketplace | Claude/Copilot install commands unchanged |
+| Codesight | `1.19.0` | 2026-07-27 | `codesight` (npx) | `--wiki` unchanged; Node 18+ |
+| Graphify | `0.17.1` | 2026-06-23 | `@sentropic/graphify` (npm) | Install/use flow unchanged |
+| Repomix | `1.18.0` | 2026-08-04 | `repomix` (npx) | Commands unchanged; requires Node >22.0.0 |
+| gh-aw | `0.86.2` | 2026-08-11 | `github/gh-aw` (gh extension) | Install command unchanged |
+| Headroom | `0.35.0` | 2026-08-13 | `headroom-ai[proxy]` (PyPI) | Granular proxy extra remains valid; Python 3.10+ |
+| code2prompt | `4.2.0` | 2025-12-11 | Homebrew / Cargo (documented only) | No change |
+| LLMLingua | `0.2.2` | 2024-04-09 | `llmlingua` (pip, documented only) | No change |
+
+### Compatibility and release hardening
+
+- Replaced Serena's removed `setup claude-code` command with the current `serena init`
+  flow and linked to the maintained client-configuration guide.
+- Tightened the Repomix runtime check to match its strict Node `>22.0.0` engine.
+- Updated the generated OpenWiki workflow to OpenWiki 0.3.3 and immutable releases of
+  Checkout 7.0.1, setup-node 7.0.0, and create-pull-request 8.1.1.
+- Corrected Headroom's repository URL while retaining its supported, minimal `[proxy]`
+  dependency extra.
+- Pinned CI and release actions to immutable commits, including action-gh-release 3.0.2.
+- Synchronized the CLI version with the changelog and added local plus tag-time checks
+  that reject future CLI, changelog, or release-tag version drift.
+
 ## [1.0.0] — 2026-07-24
 
 ### Tool versions refreshed

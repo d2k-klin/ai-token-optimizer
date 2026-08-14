@@ -4,10 +4,13 @@ load helper
 setup()    { setup_aito_env; }
 teardown() { teardown_aito_env; }
 
-@test "aito version prints version" {
+@test "aito version matches the latest changelog release" {
   run aito version
   [ "$status" -eq 0 ]
-  [[ "$output" =~ ^aito\ [0-9] ]]
+  local cli_version="${output#aito }"
+  local changelog_version
+  changelog_version="$(awk '/^## \[[0-9]+\./ { version=$0; sub(/^## \[/, "", version); sub(/\].*$/, "", version); print version; exit }' "$AITO_HOME/CHANGELOG.md")"
+  [ "$cli_version" = "$changelog_version" ]
 }
 
 @test "aito help lists commands" {

@@ -73,7 +73,7 @@ Selectable tools and documented complements are listed below. See
 | [Graphify](https://github.com/rhanka/graphify) | Maps code plus docs into a knowledge graph for relationship and architecture questions. | Optional |
 | [Repomix](https://github.com/yamadashy/repomix) | Packs the repo into one AI-friendly file with token counts, for one-off exports. | Optional |
 | [gh-aw](https://github.com/github/gh-aw) | Compiles natural-language workflows into GitHub Actions that run AI agents on events. | Optional |
-| [Headroom](https://github.com/headroomlabs-ai/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
+| [Headroom](https://github.com/chopratejas/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
 | [Context7](https://github.com/upstash/context7) | Fetches current, targeted library/API documentation on demand. | Documented |
 | [code2prompt](https://github.com/mufeedvh/code2prompt) | Packs a codebase into a single prompt with token counts and filtering (Repomix alternative). | Documented |
 | [LLMLingua](https://github.com/microsoft/LLMLingua) | Compresses prompts up to ~20× by dropping low-information tokens (advanced, for custom pipelines). | Documented |

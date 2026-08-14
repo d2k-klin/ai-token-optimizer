@@ -20,12 +20,14 @@ install_serena() {
     return 1
   fi
 
+  if confirm "Initialize Serena now?" y; then
+    SERENA_USAGE_REPORTING=false serena init \
+      && ok "initialized Serena" \
+      || warn "Serena initialization failed; run 'serena init' manually"
+  fi
   if printf '%s\n' "${tracks:-}" | grep -Fqx claude; then
-    if confirm "Configure Serena for Claude Code now?" y; then
-      SERENA_USAGE_REPORTING=false serena setup claude-code \
-        && ok "configured Serena for Claude Code" \
-        || warn "Serena Claude Code setup failed; run 'serena setup claude-code' manually"
-    fi
+    info "Claude Code: follow Serena's current client setup guide:"
+    info "  https://oraios.github.io/serena/02-usage/030_clients.html"
   fi
   if printf '%s\n' "${tracks:-}" | grep -Fqx copilot; then
     info "VS Code Copilot: run 'MCP: Add Server' and enter:"

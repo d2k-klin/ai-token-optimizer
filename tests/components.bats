@@ -26,7 +26,7 @@ teardown() { teardown_aito_env; }
 
 @test "RTK forwards AITO_RTK_VERSION to the verified upstream installer" {
   export MOCK_PIN_LOG="$PROJECT/rtk-version"
-  export AITO_RTK_VERSION="v0.43.0"
+  export AITO_RTK_VERSION="v0.45.0"
   export AITO_PKG="none"
   printf '%s\n' \
     '#!/usr/bin/env bash' \
@@ -38,7 +38,7 @@ teardown() { teardown_aito_env; }
   . "$AITO_LIB/components/rtk.sh"
   install_rtk
 
-  [ "$(cat "$MOCK_PIN_LOG")" = "v0.43.0" ]
+  [ "$(cat "$MOCK_PIN_LOG")" = "v0.45.0" ]
 }
 
 @test "OpenWiki installs by default without adding its GitHub Action" {
@@ -64,6 +64,7 @@ teardown() { teardown_aito_env; }
 
   [ -f .github/workflows/openwiki-update.yml ]
   grep -Fq 'openwiki code --update --print' .github/workflows/openwiki-update.yml
+  grep -Fq 'openwiki@0.3.3' .github/workflows/openwiki-update.yml
   grep -Fq 'OPENWIKI_TELEMETRY_DISABLED: "1"' .github/workflows/openwiki-update.yml
 
   printf '%s\n' 'name: Custom OpenWiki workflow' >.github/workflows/openwiki-update.yml
@@ -72,7 +73,7 @@ teardown() { teardown_aito_env; }
   [ ! -e .github/workflows/openwiki-update.yml.bak ]
 }
 
-@test "Serena installs a pinned release and configures the Claude Code track" {
+@test "Serena installs a pinned release and initializes the current CLI" {
   export MOCK_LOG="$PROJECT/serena.log"
   local tool
   for tool in uv serena; do
@@ -80,14 +81,14 @@ teardown() { teardown_aito_env; }
       "$tool" >"$MOCKBIN/$tool"
     chmod +x "$MOCKBIN/$tool"
   done
-  export tracks=claude AITO_SERENA_VERSION=1.6.1
+  export tracks=claude AITO_SERENA_VERSION=1.7.0
 
   # shellcheck source=lib/components/serena.sh
   . "$AITO_LIB/components/serena.sh"
   install_serena
 
-  grep -Fqx $'uv\ttool install --force -p 3.13 serena-agent==1.6.1' "$MOCK_LOG"
-  grep -Fqx $'serena\tsetup claude-code' "$MOCK_LOG"
+  grep -Fqx $'uv\ttool install --force -p 3.13 serena-agent==1.7.0' "$MOCK_LOG"
+  grep -Fqx $'serena\tinit' "$MOCK_LOG"
 }
 
 @test "local retrieval components install without indexing or configuring agents" {
@@ -98,7 +99,7 @@ teardown() { teardown_aito_env; }
       "$tool" >"$MOCKBIN/$tool"
     chmod +x "$MOCKBIN/$tool"
   done
-  export AITO_QMD_VERSION=2.5.3 AITO_CODEBASE_MEMORY_VERSION=0.9.0
+  export AITO_QMD_VERSION=2.5.3 AITO_CODEBASE_MEMORY_VERSION=0.10.4
 
   # shellcheck source=lib/components/qmd.sh
   . "$AITO_LIB/components/qmd.sh"
@@ -108,7 +109,7 @@ teardown() { teardown_aito_env; }
   install_codebase_memory
 
   grep -Fqx $'npm\tinstall -g @tobilu/qmd@2.5.3' "$MOCK_LOG"
-  grep -Fqx $'npm\tinstall -g codebase-memory-mcp@0.9.0' "$MOCK_LOG"
+  grep -Fqx $'npm\tinstall -g codebase-memory-mcp@0.10.4' "$MOCK_LOG"
   ! grep -Fqx $'qmd\tembed' "$MOCK_LOG"
   ! grep -Fqx $'codebase-memory-mcp\tinstall' "$MOCK_LOG"
   grep -Fqx '.qmd/*.sqlite*' .gitignore
@@ -122,14 +123,14 @@ teardown() { teardown_aito_env; }
     'printf "%s\n" "$*" >>"$MOCK_LOG"' \
     'exit 0' >"$MOCKBIN/npx"
   chmod +x "$MOCKBIN/npx"
-  export tracks=claude AITO_CLAUDE_MEM_VERSION=13.12.4
+  export tracks=claude AITO_CLAUDE_MEM_VERSION=13.15.0
   confirm() { return 0; }
 
   # shellcheck source=lib/components/claude-mem.sh
   . "$AITO_LIB/components/claude-mem.sh"
   install_claude_mem
 
-  grep -Fqx -- '--yes claude-mem@13.12.4 install' "$MOCK_LOG"
+  grep -Fqx -- '--yes claude-mem@13.15.0 install' "$MOCK_LOG"
 }
 
 @test "grepai prefers Homebrew and leaves provider initialization to the user" {

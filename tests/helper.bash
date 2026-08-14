@@ -18,7 +18,7 @@ setup_aito_env() {
   # Mock external tools so installers are network-free no-ops.
   MOCKBIN="$PROJECT/.mockbin"; mkdir -p "$MOCKBIN"
   local t
-  for t in node npm npx openwiki openspec rtk ccusage code gh \
+  for t in node npm npx openwiki openspec rtk ccusage code gh claude copilot \
            qmd codebase-memory-mcp serena grepai uv go; do
     printf '#!/usr/bin/env bash\nexit 0\n' >"$MOCKBIN/$t"
     chmod +x "$MOCKBIN/$t"

@@ -2,7 +2,7 @@
 # components/headroom.sh — OPTIONAL, ADVANCED. Off by default.
 # Headroom compresses tool outputs, files, RAG material, and conversation context
 # *before they reach the model* by running a LOCAL PROXY in front of your AI client.
-# See https://github.com/headroomlabs-ai/headroom
+# See https://github.com/chopratejas/headroom
 #
 # IMPORTANT NOTE (read before enabling):
 #   • It becomes an intermediary in your model traffic: it intercepts, transforms,
@@ -40,14 +40,14 @@ install_headroom() {
     info "installing $pkg via pipx…"
     pipx install "${python_args[@]}" "$pkg" >/dev/null 2>&1 \
       && ok "installed headroom via pipx" \
-      || warn "pipx install failed — see https://github.com/headroomlabs-ai/headroom for setup"
+      || warn "pipx install failed — see https://github.com/chopratejas/headroom for setup"
   elif have pip3; then
     warn "prefer pipx; attempting pip3 --user install"
     pip3 install --user "$pkg" >/dev/null 2>&1 \
       && ok "installed headroom via pip3" \
-      || warn "pip3 install failed — see https://github.com/headroomlabs-ai/headroom for setup"
+      || warn "pip3 install failed — see https://github.com/chopratejas/headroom for setup"
   else
-    warn "no pipx/pip3 found — install from https://github.com/headroomlabs-ai/headroom"
+    warn "no pipx/pip3 found — install from https://github.com/chopratejas/headroom"
   fi
 
   info "Verify with 'headroom doctor'; use 'headroom wrap <agent>' or 'headroom proxy'."

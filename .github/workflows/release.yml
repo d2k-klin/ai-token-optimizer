@@ -12,13 +12,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0   # full history needed for changelog generation
 
-      - name: Extract version from tag
+      - name: Validate release version
         id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          CLI_VERSION="$(bash bin/aito --version | awk '{print $2}')"
+          if [ "$TAG_VERSION" != "$CLI_VERSION" ]; then
+            echo "Tag version $TAG_VERSION does not match CLI version $CLI_VERSION" >&2
+            exit 1
+          fi
+          if ! grep -Fq "## [$TAG_VERSION]" CHANGELOG.md; then
+            echo "CHANGELOG.md has no release section for $TAG_VERSION" >&2
+            exit 1
+          fi
+          echo "version=$TAG_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Extract changelog section for this release
         id: changelog
@@ -46,7 +57,7 @@ jobs:
           fi
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           name: "v${{ steps.version.outputs.version }}"
           body_path: /tmp/release-notes.md
