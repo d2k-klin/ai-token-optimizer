@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/mascot.png" alt="Mr. D, the aito mascot" width="200">
+  <a href="https://mr-d.dev"><img src="docs/assets/mascot.png" alt="Mr. D, the aito mascot" width="200"></a>
 </p>
 
 # aito — stop your AI coding agent from burning tokens
@@ -206,6 +206,7 @@ a labeled chars/4 estimate. See [Testing & Proving Token Reduction](docs/testing
 | `AITO_SERENA_VERSION` / `AITO_CLAUDE_MEM_VERSION` | Pin Serena or Claude-Mem |
 | `AITO_CODEBASE_MEMORY_VERSION` / `AITO_QMD_VERSION` / `AITO_GREPAI_VERSION` | Pin retrieval components (grepai pin applies to Go builds) |
 | `AITO_RTK_VERSION` | Pin the RTK release installed by its verified upstream installer |
+| `AITO_CAVEMAN_VERSION` | Pin the Caveman release whose installer script is fetched |
 | `AITO_CODESIGHT_VERSION` / `AITO_GRAPHIFY_VERSION` / `AITO_REPOMIX_VERSION` | Pin repository-tool versions |
 | `AITO_HEADROOM_VERSION` | Pin the Headroom Python package version |
 | `NO_COLOR=1` | Disable colored output |
@@ -223,4 +224,4 @@ Prereqs: `shellcheck` and `bats` (`brew install shellcheck bats-core` or
 offline and installs nothing. To try it by hand, run `AITO_ASSUME_YES=1 aito setup`
 inside a throwaway `git init` directory.
 
-MIT licensed.
+MIT licensed. Built by [Mr. D](https://mr-d.dev).
