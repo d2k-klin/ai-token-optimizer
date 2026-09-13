@@ -64,7 +64,7 @@ teardown() { teardown_aito_env; }
 
   [ -f .github/workflows/openwiki-update.yml ]
   grep -Fq 'openwiki code --update --print' .github/workflows/openwiki-update.yml
-  grep -Fq 'openwiki@0.3.3' .github/workflows/openwiki-update.yml
+  grep -Fq 'openwiki@0.5.1' .github/workflows/openwiki-update.yml
   grep -Fq 'OPENWIKI_TELEMETRY_DISABLED: "1"' .github/workflows/openwiki-update.yml
 
   printf '%s\n' 'name: Custom OpenWiki workflow' >.github/workflows/openwiki-update.yml

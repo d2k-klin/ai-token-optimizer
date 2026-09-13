@@ -6,7 +6,8 @@
 # want it. See https://github.com/JuliusBrussee/caveman
 #
 # NOTE: The pip "caveman" package is an unrelated HTML5 manifest validator.
-# The real Caveman is installed via its curl|bash script and requires Node ≥18.
+# The real Caveman is installed via its curl|bash script and requires Node ≥22.13.
+# The installer URL is pinned to a reviewed tag; override with AITO_CAVEMAN_VERSION.
 
 install_caveman() {
   step "Caveman (full package — optional)"
@@ -15,12 +16,14 @@ install_caveman() {
     info "Skipped full Caveman; keeping the lightweight instruction-only approach."
     return 0
   fi
-  if ! have node; then
-    warn "Node.js ≥18 required for Caveman — install Node first."
+  if ! node_at_least 22.13; then
+    warn "Caveman's installer requires Node.js >=22.13 — upgrade Node, then re-run."
     return 1
   fi
-  info "installing Caveman via official installer…"
-  curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash >/dev/null 2>&1 \
+  local ver="${AITO_CAVEMAN_VERSION:-v2.6.0}"
+  case "$ver" in v*) ;; *) ver="v$ver" ;; esac
+  info "installing Caveman@$ver via official installer…"
+  curl -fsSL "https://raw.githubusercontent.com/JuliusBrussee/caveman/$ver/install.sh" | bash >/dev/null 2>&1 \
     && ok "installed Caveman" \
     || warn "Caveman install failed — see https://github.com/JuliusBrussee/caveman"
 }

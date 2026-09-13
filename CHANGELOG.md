@@ -8,6 +8,42 @@ versions whose commands and compatibility were validated together.
 
 ## [Unreleased]
 
+## [1.0.2] — 2026-09-13
+
+### Tool versions refreshed
+
+| Tool | Latest | Released | Install path | Compatibility result |
+|---|---:|---:|---|---|
+| OpenWiki | `0.5.1` | 2026-09-10 | `openwiki` (npm) | `code --update --print` remains valid; Node 22+ |
+| OpenSpec | `1.13.0` | 2026-09-09 | `@fission-ai/openspec` (npm) | `init --tools github-copilot,claude` remains valid; Node 20.19+ |
+| Serena | `1.7.0` | 2026-08-09 | `serena-agent` (PyPI/uv) | Unchanged since 1.0.1; Python 3.11–3.14 |
+| Codebase-Memory-MCP | `0.10.8` | 2026-09-07 | npm/native binary | Commands unchanged; Node 18+ wrapper |
+| QMD | `2.8.3` | 2026-08-16 | `@tobilu/qmd` (npm) | `init`, `collection add`, `embed` unchanged; Node 22+ |
+| grepai | `0.37.0` | 2026-08-29 | Homebrew / pinned Go build | Commands unchanged; source build now needs Go 1.25.5+ |
+| Claude-Mem | `13.24.23` | 2026-09-11 | official `npx ... install` | Official installer remains valid; Node 20.12+ and Bun 1+ |
+| Context7 CLI | `0.5.11` | 2026-09-08 | `ctx7` (npm, documented only) | Commands unchanged |
+| RTK | `0.49.0` | 2026-09-05 | Homebrew / verified upstream installer | Installer contract and `init -g --copilot` unchanged |
+| ccusage | `20.0.20` | 2026-08-15 | `ccusage` (npm) | Commands unchanged |
+| Caveman | `2.6.0` | 2026-09-02 | official installer | Installer now requires Node 22.13+ |
+| Ponytail | `4.9.0` | 2026-08-07 | plugin marketplace | Unchanged since 1.0.1 |
+| Codesight | `1.19.0` | 2026-07-27 | `codesight` (npx) | Unchanged since 1.0.1; Node 18+ |
+| Graphify | `0.17.1` | 2026-06-23 | `@sentropic/graphify` (npm) | Unchanged since 1.0.1 |
+| Repomix | `1.18.0` | 2026-08-04 | `repomix` (npx) | Unchanged since 1.0.1; requires Node >22.0.0 |
+| gh-aw | `0.88.7` | 2026-09-08 | `github/gh-aw` (gh extension) | Install command unchanged |
+| Headroom | `0.37.0` | 2026-08-27 | `headroom-ai[proxy]` (PyPI) | `[proxy]` extra remains valid; Python 3.10+ |
+| code2prompt | `4.2.0` | 2025-12-11 | Homebrew / Cargo (documented only) | No change |
+| LLMLingua | `0.2.2` | 2024-04-09 | `llmlingua` (pip, documented only) | No change |
+
+### Compatibility changes
+
+- Raised grepai's source-build pin to `v0.37.0`; its `go.mod` now requires Go 1.25.5+,
+  so the fallback warning names the current floor.
+- Raised Caveman's Node floor from 18 to 22.13 to match its current installer, pinned the
+  installer URL to the reviewed `v2.6.0` tag, and added an `AITO_CAVEMAN_VERSION` override.
+- Updated the generated OpenWiki workflow to OpenWiki 0.5.1.
+- Bumped the release workflow's `action-gh-release` pin to the immutable commit for 3.0.3.
+- Added the project mascot (Mr. D) to the README header.
+
 ## [1.0.1] — 2026-08-14
 
 ### Tool versions refreshed

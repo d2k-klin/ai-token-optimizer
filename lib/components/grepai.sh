@@ -5,7 +5,7 @@
 
 install_grepai() {
   step "grepai (optional semantic code retrieval)"
-  local ver="${AITO_GREPAI_VERSION:-v0.35.0}"
+  local ver="${AITO_GREPAI_VERSION:-v0.37.0}"
   case "$ver" in v*) ;; *) ver="v$ver" ;; esac
 
   if [ "${AITO_PKG:-none}" = "brew" ] && have brew; then
@@ -16,7 +16,7 @@ install_grepai() {
   elif have go; then
     info "installing grepai@$ver from source with Go…"
     go install "github.com/yoanbernabeu/grepai/cmd/grepai@$ver" >/dev/null 2>&1 \
-      || { warn "grepai Go install failed (current source requires Go 1.24.2+)"; return 1; }
+      || { warn "grepai Go install failed (current source requires Go 1.25.5+)"; return 1; }
   elif ! have grepai; then
     warn "Install grepai from its checksummed release assets:"
     warn "https://github.com/yoanbernabeu/grepai/releases/tag/$ver"

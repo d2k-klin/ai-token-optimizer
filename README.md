@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/mascot.png" alt="Mr. D, the aito mascot" width="200">
+</p>
+
 # aito — stop your AI coding agent from burning tokens
 
 [![CI](https://github.com/d2k-klin/ai-token-optimizer/actions/workflows/ci.yml/badge.svg)](https://github.com/d2k-klin/ai-token-optimizer/actions/workflows/ci.yml)
