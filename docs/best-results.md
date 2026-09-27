@@ -84,6 +84,7 @@ OpenSpec  +  CLAUDE.md  +  ACE playbook  +  RTK (explicit)  +  ccusage
 | Agent opens whole files to find exact symbols/references | **Serena** | Best first retrieval pilot for medium/large codebases. |
 | Agent repeatedly reconstructs call graphs/routes/imports | **Codebase-Memory-MCP** | Local deterministic structural graph; verify source for high-stakes answers. |
 | Agent needs fuzzy “where is this concept?” search | **grepai** | Use a local embedder unless cloud code transfer is approved. |
+| Reviews keep re-reading callers and tests of a diff | **code-review-graph** | Blast-radius queries over MCP; overlaps Codebase-Memory-MCP, so pilot one. |
 | OpenWiki/OpenSpec/docs have become large | **QMD** | Local hybrid retrieval; models use about 2 GB. |
 | Claude Code repeats discoveries across sessions | **Claude-Mem** | Persistent session capture; privacy-review before enabling. |
 | Agent needs current third-party API docs | **Context7** | Complementary remote service; keep proprietary details out of queries. |

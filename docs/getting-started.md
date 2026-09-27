@@ -18,8 +18,8 @@ repository. This guide takes you from zero to a configured project.
 
 | Recommended | Enables |
 |---|---|
-| **Node.js 22+ + npm** | OpenWiki, OpenSpec, Claude-Mem, Codebase-Memory-MCP, QMD, Repomix, Codesight, Graphify, ccusage, and full Caveman. Node 22 satisfies every current Node-based component. |
-| **`uv`** | Installing Serena with its supported Python 3.13 tool environment. |
+| **Node.js 22.22+ + npm** | OpenWiki, OpenSpec, Claude-Mem, Codebase-Memory-MCP, QMD, Repomix, Codesight, ccusage, and full Caveman. Node 22.22+ satisfies every current Node-based component. |
+| **`uv`** | Installing Serena (Python 3.13), Graphify, and code-review-graph (Python 3.10+) as isolated tools; `pipx` also works for the latter two. |
 | **Homebrew, Go 1.24+, or `curl`** | grepai uses Homebrew/Go; RTK uses Homebrew or its official installer. |
 | **jq** | Deep-merging VS Code `settings.json` instead of printing keys to add. |
 | **python3 + `tiktoken`** | Exact token counts (otherwise a labeled chars/4 estimate). |
@@ -29,8 +29,8 @@ repository. This guide takes you from zero to a configured project.
 Nothing in the recommended list is mandatory — `aito` degrades gracefully and tells you
 what it skipped.
 
-The individual minimums are OpenWiki, QMD, and Repomix Node 22+; Claude-Mem 20.12+;
-OpenSpec 20.19+; Graphify 20+; and Codebase-Memory-MCP/Codesight 18+. QMD's optional
+The individual minimums are OpenWiki Node 22.22+; full Caveman 22.13+; QMD and Repomix 22+;
+Claude-Mem 20.12+ (plus Bun 1.1.31+); OpenSpec 20.19+; and Codebase-Memory-MCP/Codesight 18+. QMD's optional
 embedding step downloads about 2 GB of models. Python 3.13 is used for Serena and
 recommended for Headroom; Headroom's hard minimum is Python 3.10.
 
@@ -95,7 +95,8 @@ You'll be asked two things:
 
 1. **Track(s)** — GitHub Copilot, Claude Code, or both.
 2. **Tools** — Caveman, Ponytail, OpenWiki, OpenSpec, Serena, Codebase-Memory-MCP, QMD,
-   grepai, Claude-Mem, RTK, ccusage, Codesight, Graphify, Repomix, gh-aw, and Headroom.
+   grepai, code-review-graph, Claude-Mem, RTK, ccusage, Codesight, Graphify, Repomix, gh-aw,
+   and Headroom.
    **Caveman**, **Ponytail**, and **OpenWiki** are pre-checked by default; everything
    else is off unless you explicitly select it.
 

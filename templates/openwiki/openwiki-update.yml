@@ -26,7 +26,7 @@ jobs:
 
       - name: Install OpenWiki
         # Audited by aito on 2026-09-13. Update deliberately after compatibility review.
-        run: npm install --global openwiki@0.5.1
+        run: npm install --global openwiki@0.6.0
 
       - name: Run OpenWiki
         # --update also initializes code docs on the first run when env vars are set.

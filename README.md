@@ -70,14 +70,15 @@ Selectable tools and documented complements are listed below. See
 | [Codebase-Memory-MCP](https://github.com/DeusData/codebase-memory-mcp) | Builds a local structural code graph for fast relationship and impact queries. | Optional |
 | [QMD](https://github.com/tobi/qmd) | Runs local BM25 + vector + reranked search over OpenWiki, OpenSpec, and other Markdown. | Optional |
 | [grepai](https://github.com/yoanbernabeu/grepai) | Provides semantic code search and call graphs with local or cloud embeddings. | Optional |
+| [code-review-graph](https://github.com/tirth8205/code-review-graph) | Serves a diff's blast radius over MCP so reviews read affected code, not whole files. | Optional |
 | [Claude-Mem](https://github.com/thedotmack/claude-mem) | Compresses and retrieves agent observations across Claude Code sessions. | Optional (warned) |
 | [RTK](https://github.com/rtk-ai/rtk) | Compresses noisy terminal output (git, tests, builds, logs) before it enters model context. | Optional |
 | [ccusage](https://github.com/ccusage/ccusage) | Local CLI that reports token usage and cost from your agent logs so you can watch the trend. | Optional |
 | [Codesight](https://github.com/Houseofmvps/codesight) | Generates a compact AST-based repo map / wiki so the agent re-reads fewer files. | Optional |
-| [Graphify](https://github.com/rhanka/graphify) | Maps code plus docs into a knowledge graph for relationship and architecture questions. | Optional |
+| [Graphify](https://github.com/Graphify-Labs/graphify) | Maps code plus docs into a knowledge graph for relationship and architecture questions. | Optional |
 | [Repomix](https://github.com/yamadashy/repomix) | Packs the repo into one AI-friendly file with token counts, for one-off exports. | Optional |
 | [gh-aw](https://github.com/github/gh-aw) | Compiles natural-language workflows into GitHub Actions that run AI agents on events. | Optional |
-| [Headroom](https://github.com/chopratejas/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
+| [Headroom](https://github.com/headroomlabs-ai/headroom) | Local proxy that compresses context before it reaches the model. | Opt-in (off, warned) |
 | [Context7](https://github.com/upstash/context7) | Fetches current, targeted library/API documentation on demand. | Documented |
 | [code2prompt](https://github.com/mufeedvh/code2prompt) | Packs a codebase into a single prompt with token counts and filtering (Repomix alternative). | Documented |
 | [LLMLingua](https://github.com/microsoft/LLMLingua) | Compresses prompts up to ~20× by dropping low-information tokens (advanced, for custom pipelines). | Documented |
@@ -86,7 +87,7 @@ The layers are intentionally different:
 
 ```text
 don't generate it  → Caveman / Ponytail
-don't retrieve it  → Serena / Codebase-Memory-MCP / QMD / grepai
+don't retrieve it  → Serena / Codebase-Memory-MCP / QMD / grepai / code-review-graph
 don't rediscover it → OpenWiki / OpenSpec / Claude-Mem / ACE playbook
 compress when needed → RTK / Headroom / LLMLingua
 measure the result  → aito verify / ccusage
@@ -104,7 +105,7 @@ This is deliberately boring, which is the point:
   `DO_NOT_TRACK=1`). Serena's startup metrics use
   `SERENA_USAGE_REPORTING=false`.
 - **Memory/retrieval stays opt-in.** Claude-Mem persists session observations;
-  Codebase-Memory, QMD, and grepai create local indexes; cloud grepai embeddings and
+  Codebase-Memory, QMD, grepai, and code-review-graph create local indexes; cloud grepai embeddings and
   Context7 queries cross the network. Review the [security model](docs/security.md).
 - **No proxy by default.** The only proxy-based tool (Headroom) is strictly opt-in, off by
   default, and flagged with a warning before install — nothing intercepts your AI traffic
@@ -204,7 +205,7 @@ a labeled chars/4 estimate. See [Testing & Proving Token Reduction](docs/testing
 | `AITO_INSTRUCTION_BUDGET=1500` | Token budget for instruction files |
 | `AITO_OPENWIKI_VERSION` / `AITO_OPENSPEC_VERSION` / `AITO_CCUSAGE_VERSION` | Pin npm component versions |
 | `AITO_SERENA_VERSION` / `AITO_CLAUDE_MEM_VERSION` | Pin Serena or Claude-Mem |
-| `AITO_CODEBASE_MEMORY_VERSION` / `AITO_QMD_VERSION` / `AITO_GREPAI_VERSION` | Pin retrieval components (grepai pin applies to Go builds) |
+| `AITO_CODEBASE_MEMORY_VERSION` / `AITO_QMD_VERSION` / `AITO_GREPAI_VERSION` / `AITO_CODE_REVIEW_GRAPH_VERSION` | Pin retrieval components (grepai pin applies to Go builds) |
 | `AITO_RTK_VERSION` | Pin the RTK release installed by its verified upstream installer |
 | `AITO_CAVEMAN_VERSION` | Pin the Caveman release whose installer script is fetched |
 | `AITO_CODESIGHT_VERSION` / `AITO_GRAPHIFY_VERSION` / `AITO_REPOMIX_VERSION` | Pin repository-tool versions |

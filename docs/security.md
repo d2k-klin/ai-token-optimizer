@@ -18,6 +18,7 @@ preservation** (exact errors, security warnings, and acceptance criteria stay in
 | Serena | Medium | MCP can retrieve and edit code through language servers; anonymous startup metrics default on |
 | Codebase-Memory-MCP | Medium | Scans/indexes code and can modify agent configs, instructions, skills, and hooks |
 | grepai | Medium | Local index; cloud embedding mode sends code chunks to the selected provider |
+| code-review-graph | Medium | Local SQLite graph; configurator edits agent MCP/hooks/rules; cloud embeddings opt-in |
 | Claude-Mem | Medium–high | Persists prompts/tool output/code observations and runs hooks plus a local worker |
 | RTK (explicit mode) | Low–medium | Filtered output may omit useful details |
 | RTK (auto hook) | Medium | Transparently rewrites shell commands — **off by default** |
@@ -33,12 +34,12 @@ preservation** (exact errors, security warnings, and acceptance criteria stay in
   diff-noted; VS Code settings are deep-merged, not overwritten.
 - **Safe non-interactive defaults.** Retrieval/memory additions, RTK auto hook, repository
   maps, gh-aw, and the OpenWiki GitHub Action default to *off*. Headroom, Claude-Mem,
-  Codebase-Memory's agent configurator, and full Caveman also require a separate
+  Codebase-Memory's and code-review-graph's agent configurators, and full Caveman also require a separate
   confirmation.
 - **Version pinning.** npm/PyPI components and RTK accept the documented
   `AITO_*_VERSION` overrides; plugin marketplaces serve their current release.
 - **Keep generated context out of VCS by default.** `token-report.md`, `*.bak`,
-  `repomix-output.*`, `.graphify/`, `.codesight/`, `.codebase-memory/`, QMD SQLite
+  `repomix-output.*`, `graphify-out/`, `.code-review-graph/`, `.codesight/`, `.codebase-memory/`, QMD SQLite
   indexes, and grepai's local index are added to `.gitignore`.
 - **Telemetry scope.** `aito` has no telemetry. OpenSpec initialization is run with
   `OPENSPEC_TELEMETRY=0`, and the bundled OpenWiki workflow sets

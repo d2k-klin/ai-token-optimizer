@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # components/openwiki.sh — install OpenWiki, a maintained codebase wiki for agents.
-# Requires Node >=22/npm. Initial provider/model configuration remains interactive,
+# Requires Node >=22.22/npm. Initial provider/model configuration remains interactive,
 # so aito installs the CLI and tells the user how to initialize it.
 # Override version with AITO_OPENWIKI_VERSION (default: latest).
 
@@ -10,8 +10,8 @@ install_openwiki() {
     warn "npm not found — install Node.js, then re-run. Skipping OpenWiki."
     return 1
   fi
-  if ! node_at_least 22; then
-    warn "OpenWiki requires Node.js >=22. Upgrade Node, then re-run."
+  if ! node_at_least 22.22; then
+    warn "OpenWiki requires Node.js >=22.22. Upgrade Node, then re-run."
     return 1
   fi
 

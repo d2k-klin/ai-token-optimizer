@@ -55,7 +55,7 @@ agents and updates it incrementally as the repository changes.
 
 - **Why it saves tokens:** agents can load focused, maintained documentation instead of
   repeatedly rediscovering architecture and relationships from source files.
-- **Setup/use:** `aito setup` globally installs `openwiki` (Node.js 22+). Initial
+- **Setup/use:** `aito setup` globally installs `openwiki` (Node.js 22.22+). Initial
   provider/model/API-key setup is intentionally left to
   `OPENWIKI_TELEMETRY_DISABLED=1 openwiki --init` because upstream initialization is
   interactive. Code documentation lives under `openwiki/`; OpenWiki also maintains its
@@ -206,6 +206,23 @@ callers/callees.
   `grepai init` to you. Ollama and LM Studio keep embeddings local; the OpenAI option
   sends indexed code chunks to that provider. `.grepai/index.gob` is ignored.
 
+### code-review-graph — review-scoped blast radius over MCP · **Optional**
+[code-review-graph](https://github.com/tirth8205/code-review-graph) parses the repo with
+tree-sitter into a local SQLite graph and serves it over MCP, so a review asks "what does
+this diff touch?" and reads only the affected functions, callers, and tests.
+
+- **Why it saves tokens:** reviews are where agents re-read the most — the changed file,
+  its callers, their tests. Blast-radius queries replace that file-by-file walk.
+- **Choose it when:** code review (human- or agent-driven) is a large share of your agent
+  usage. It overlaps Codebase-Memory-MCP; pilot one structural graph, not both.
+- **Setup:** `aito` installs the PyPI package with `uv` (or `pipx`; Python 3.10+).
+  Its configurator writes MCP entries, hooks, skills, and rules, so it runs only after a
+  confirmation and only for the selected tracks (`--platform claude-code` / `copilot`).
+  Build with `code-review-graph build`, refresh with `code-review-graph update`.
+- **Privacy:** no telemetry; indexing is local and `.code-review-graph/` is ignored.
+  Embeddings are optional — cloud embedding providers receive signatures and docstring
+  summaries (not function bodies).
+
 ---
 
 ## Session memory (persistent and opt-in)
@@ -241,15 +258,19 @@ API-oriented projects.
   committing; generated instructions can conflict with existing ones.
 
 ### Graphify — knowledge-graph repo map · **Optional**
-Maps code *plus* docs, PDFs, images, and diagrams into a persistent knowledge graph
-under `.graphify/` (`graph.json`, `GRAPH_REPORT.md`, a static studio, and optional wiki)
-and answers relationship/architecture questions without re-grepping.
+[Graphify](https://github.com/Graphify-Labs/graphify) maps code *plus* docs, PDFs,
+images, and diagrams into a persistent knowledge graph under `graphify-out/`
+(`graph.json`, `GRAPH_REPORT.md`, an HTML view) and answers relationship/architecture
+questions without re-grepping. Code is parsed locally with tree-sitter; docs and media
+use your assistant's model for a semantic pass.
 
 - **Choose Graphify instead of Codesight** for heterogeneous repos (code + documents +
   infra + diagrams) or graph-style relationship questions. **Pick one mapper, not both.**
-- **Setup/use:** current releases require Node.js 20+ and a global
-  `@sentropic/graphify` install. `aito` installs the matching Claude Code / VS Code
-  Copilot skill; build on demand with `/graphify .`.
+- **Setup/use:** `aito` installs the upstream PyPI package `graphifyy` (double *y*) with
+  `uv` (or `pipx`; Python 3.10+), then the matching Claude Code (`graphify install`) /
+  VS Code Copilot (`graphify vscode install`) skill; build on demand with `/graphify .`.
+  The npm `@sentropic/graphify` fork used before aito 1.0.3 is deprecated — it became the
+  unrelated Engram product; `npm uninstall -g @sentropic/graphify` if you had it.
 - **Security:** the graph reveals high-value relationships; keep output local/private and
   review it; avoid network server modes unless required.
 
@@ -334,7 +355,7 @@ the model* by running a **local proxy** in front of your AI client. Selectable i
   client, you've reviewed the proxy, and you've measured that it reduces context without
   hurting quality. Otherwise the rest of this toolkit gets most of the benefit without it.
 - `pipx install --python python3.13 "headroom-ai[proxy]"` ·
-  <https://github.com/chopratejas/headroom>
+  <https://github.com/headroomlabs-ai/headroom>
 
 ### Provider-native levers (no install — just use them)
 Often the highest-ROI moves need no tool at all: **prompt caching** (stable prefix, one

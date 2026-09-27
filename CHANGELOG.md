@@ -8,6 +8,54 @@ versions whose commands and compatibility were validated together.
 
 ## [Unreleased]
 
+## [1.0.3] — 2026-09-27
+
+### Tool versions refreshed
+
+| Tool | Latest | Released | Install path | Compatibility result |
+|---|---:|---:|---|---|
+| OpenWiki | `0.6.0` | 2026-09-23 | `openwiki` (npm) | `--init` / `code --update --print` unchanged; now requires Node 22.22+ |
+| OpenSpec | `1.13.2` | 2026-09-23 | `@fission-ai/openspec` (npm) | Commands unchanged; Node 20.19+ |
+| Serena | `1.7.0` | 2026-08-09 | `serena-agent` (PyPI/uv) | Unchanged since 1.0.1 |
+| Codebase-Memory-MCP | `0.11.0` | 2026-09-15 | npm/native binary | `install` unchanged; first run migrates the on-disk index |
+| QMD | `2.8.3` | 2026-08-16 | `@tobilu/qmd` (npm) | Unchanged since 1.0.2 |
+| grepai | `0.37.0` | 2026-08-29 | Homebrew / pinned Go build | Unchanged since 1.0.2 |
+| **code-review-graph** | `2.3.9` | 2026-09-18 | `code-review-graph` (PyPI, uv/pipx) | **New component**; Python 3.10+ |
+| Claude-Mem | `13.28.0` | 2026-09-26 | official `npx ... install` | Installer unchanged; engines now name Bun 1.1.31+ |
+| Context7 CLI | `0.5.12` | 2026-09-22 | `ctx7` (npm, documented only) | Commands unchanged |
+| RTK | `0.50.0` | 2026-09-24 | Homebrew / verified upstream installer | `init -g --copilot` unchanged |
+| ccusage | `20.0.24` | 2026-09-21 | `ccusage` (npm) | Commands unchanged |
+| Caveman | `2.7.0` | 2026-09-15 | official installer (pinned tag) | Installer pin raised; Node 22.13+ unchanged |
+| Ponytail | `4.10.0` | 2026-09-14 | plugin marketplace | Install commands unchanged |
+| Codesight | `1.19.0` | 2026-07-27 | `codesight` (npx) | Unchanged since 1.0.1 |
+| Graphify | `0.9.69` | 2026-09-26 | **`graphifyy` (PyPI, uv/pipx)** | **Migrated** from the deprecated npm `@sentropic/graphify` |
+| Repomix | `1.18.1` | 2026-09-21 | `repomix` (npx) | Commands unchanged; Node >22.0.0 |
+| gh-aw | `0.89.21` | 2026-09-23 | `github/gh-aw` (gh extension) | Install command unchanged |
+| Headroom | `0.39.1` | 2026-09-26 | `headroom-ai[proxy]` (PyPI) | `[proxy]` extra valid; repo moved to `headroomlabs-ai/headroom` |
+| code2prompt | `4.2.0` | 2025-12-11 | Homebrew / Cargo (documented only) | No change |
+| LLMLingua | `0.2.2` | 2024-04-09 | `llmlingua` (pip, documented only) | No change |
+
+### Added
+
+- **code-review-graph** component: a local tree-sitter graph served over MCP that
+  answers a diff's blast radius, so reviews read affected code instead of whole files.
+  Installs with uv/pipx; its agent configurator runs only after confirmation and only for
+  the selected tracks. Pin with `AITO_CODE_REVIEW_GRAPH_VERSION`.
+
+### Changed
+
+- **Graphify** now installs the upstream PyPI package `graphifyy`
+  ([Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)). The npm
+  `@sentropic/graphify` fork published a final forwarding shim (0.19.0) and became the
+  unrelated Engram product. Skills install via `graphify install` (Claude Code) and
+  `graphify vscode install` (VS Code Copilot); output moves to `graphify-out/`.
+  Existing users can `npm uninstall -g @sentropic/graphify`.
+- Raised OpenWiki's Node floor to 22.22 (upstream `engines` since 0.5.2) and updated the
+  generated OpenWiki workflow to 0.6.0.
+- Pinned the Caveman installer to `v2.7.0`.
+- Updated Headroom links to its new home, `headroomlabs-ai/headroom`.
+- `aito doctor` now reports `code-review-graph` and `graphify`.
+
 ## [1.0.2] — 2026-09-13
 
 ### Tool versions refreshed

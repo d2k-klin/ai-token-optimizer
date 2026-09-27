@@ -4,10 +4,10 @@ load helper
 setup()    { setup_aito_env; load_libs; }
 teardown() { teardown_aito_env; }
 
-@test "Graphify uses the current package and installs selected host skills" {
+@test "Graphify uses the upstream PyPI package and installs selected host skills" {
   export MOCK_LOG="$PROJECT/tool.log"
   local tool
-  for tool in node npm graphify; do
+  for tool in uv graphify; do
     printf '#!/usr/bin/env bash\nprintf "%%s\\t%%s\\n" "%s" "$*" >>"$MOCK_LOG"\nexit 0\n' \
       "$tool" >"$MOCKBIN/$tool"
     chmod +x "$MOCKBIN/$tool"
@@ -18,10 +18,32 @@ teardown() { teardown_aito_env; }
   . "$AITO_LIB/components/graphify.sh"
   install_graphify
 
-  grep -Fqx $'npm\tinstall -g @sentropic/graphify@latest' "$MOCK_LOG"
-  grep -Fqx $'graphify\tinstall --platform claude' "$MOCK_LOG"
-  grep -Fqx $'graphify\tinstall --platform vscode' "$MOCK_LOG"
-  grep -Fqx '.graphify/' .gitignore
+  grep -Fqx $'uv\ttool install --force graphifyy' "$MOCK_LOG"
+  grep -Fqx $'graphify\tinstall' "$MOCK_LOG"
+  grep -Fqx $'graphify\tvscode install' "$MOCK_LOG"
+  grep -Fqx 'graphify-out/' .gitignore
+}
+
+@test "code-review-graph installs pinned and configures only the selected tracks" {
+  export MOCK_LOG="$PROJECT/crg.log"
+  local tool
+  for tool in uv code-review-graph; do
+    printf '#!/usr/bin/env bash\nprintf "%%s\\t%%s\\n" "%s" "$*" >>"$MOCK_LOG"\nexit 0\n' \
+      "$tool" >"$MOCKBIN/$tool"
+    chmod +x "$MOCKBIN/$tool"
+  done
+  export tracks=claude AITO_CODE_REVIEW_GRAPH_VERSION=2.3.9
+  confirm() { return 0; }
+
+  # shellcheck source=lib/components/code-review-graph.sh
+  . "$AITO_LIB/components/code-review-graph.sh"
+  install_code_review_graph
+
+  grep -Fqx $'uv\ttool install --force code-review-graph==2.3.9' "$MOCK_LOG"
+  grep -Fqx $'code-review-graph\tinstall --platform claude-code' "$MOCK_LOG"
+  ! grep -Fq -- '--platform copilot' "$MOCK_LOG"
+  ! grep -Fqx $'code-review-graph\tbuild' "$MOCK_LOG"
+  grep -Fqx '.code-review-graph/' .gitignore
 }
 
 @test "RTK forwards AITO_RTK_VERSION to the verified upstream installer" {
@@ -64,7 +86,7 @@ teardown() { teardown_aito_env; }
 
   [ -f .github/workflows/openwiki-update.yml ]
   grep -Fq 'openwiki code --update --print' .github/workflows/openwiki-update.yml
-  grep -Fq 'openwiki@0.5.1' .github/workflows/openwiki-update.yml
+  grep -Fq 'openwiki@0.6.0' .github/workflows/openwiki-update.yml
   grep -Fq 'OPENWIKI_TELEMETRY_DISABLED: "1"' .github/workflows/openwiki-update.yml
 
   printf '%s\n' 'name: Custom OpenWiki workflow' >.github/workflows/openwiki-update.yml

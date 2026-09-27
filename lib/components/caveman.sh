@@ -20,7 +20,7 @@ install_caveman() {
     warn "Caveman's installer requires Node.js >=22.13 — upgrade Node, then re-run."
     return 1
   fi
-  local ver="${AITO_CAVEMAN_VERSION:-v2.6.0}"
+  local ver="${AITO_CAVEMAN_VERSION:-v2.7.0}"
   case "$ver" in v*) ;; *) ver="v$ver" ;; esac
   info "installing Caveman@$ver via official installer…"
   curl -fsSL "https://raw.githubusercontent.com/JuliusBrussee/caveman/$ver/install.sh" | bash >/dev/null 2>&1 \
